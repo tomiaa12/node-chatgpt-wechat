@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "node.js 调用 openai 实现微信自动回复 chatgpt 回答",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js"
   },
