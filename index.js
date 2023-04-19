@@ -9,7 +9,7 @@ const wechaty = WechatyBuilder.build();
 
 const server = http.createServer();
 server.listen(8888);
-
+let username = "";
 wechaty
   .on("scan", (qrcode, status) =>
     console.log(
@@ -18,12 +18,14 @@ wechaty
       )}`
     )
   )
-  .on("login", (user) => console.log(`用户名 ${user.name()} 登录成功`))
+  .on("login", (user) =>
+    console.log(`用户名 ${(username = user.name() || "")} 登录成功`)
+  )
   .on("message", async (message) => {
     // 如果是群聊消息
     if (message.room()) {
       // const type = message.type();
-      const msg = message.text().replace("@Tomiaa", "");
+      const msg = message.text().replace(`@${username}`, "");
       const room = await message.room();
       const isMentioned = await message.mentionSelf();
       const contact = message.talker();
