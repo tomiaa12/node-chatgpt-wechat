@@ -9,6 +9,23 @@ const wechaty = WechatyBuilder.build();
 
 const server = http.createServer();
 server.listen(8888);
+
+function getMsg(msg) {
+  return axios({
+    method: "post",
+    url: "https://api.openai.com/v1/chat/completions",
+    headers: {
+      Authorization: "Bearer " + apiKey,
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify({
+      model,
+      messages: [{ role: "user", content: msg }],
+    }),
+    timeout: 0,
+  });
+}
+
 let username = "";
 wechaty
   .on("scan", (qrcode, status) =>
@@ -34,19 +51,7 @@ wechaty
 
       if (isMentioned) {
         try {
-          const res = await axios({
-            method: "post",
-            url: "https://api.openai.com/v1/chat/completions",
-            headers: {
-              Authorization: "Bearer " + apiKey,
-              "Content-Type": "application/json",
-            },
-            data: JSON.stringify({
-              model,
-              messages: [{ role: "user", content: msg }],
-            }),
-            timeout: 0,
-          });
+          const res = await getMsg(msg);
           console.log(
             `群号: ${topic}, 用户名: ${contact.name()}, 消息: ${msg},回答: ${
               res.data.choices[0].message.content
@@ -58,6 +63,11 @@ wechaty
           room.say(`@${contact.name()} 报错了...`);
         }
       }
+    } else if (message.text()) {
+      // 文字消息
+      const msg = message.text();
+      const res = await getMsg(msg);
+      await message.say(res.data.choices[0].message.content);
     }
   });
 wechaty.start();
