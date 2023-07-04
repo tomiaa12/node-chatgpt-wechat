@@ -2,7 +2,7 @@ import { WechatyBuilder } from "wechaty";
 import http from "http";
 import axios from "axios";
 
-const apiKey = "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";
+const apiKey = "xxx";
 const model = "gpt-3.5-turbo";
 
 const wechaty = WechatyBuilder.build();
@@ -22,7 +22,7 @@ function getMsg(msg) {
       model,
       messages: [{ role: "user", content: msg }],
     }),
-    timeout: 0,
+    timeout: 20000,
   });
 }
 
@@ -69,5 +69,8 @@ wechaty
       const res = await getMsg(msg);
       await message.say(res.data.choices[0].message.content);
     }
+  })
+  .on("error", (error) => {
+    console.error("error", error);
   });
 wechaty.start();
