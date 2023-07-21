@@ -1,8 +1,11 @@
 import { WechatyBuilder } from "wechaty";
 import http from "http";
 import axios from "axios";
+import schedule from 'node-schedule';
 
-const apiKey = "xxx";
+axios.interceptors.response.use((res) => res.data);
+
+const apiKey = "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";
 const model = "gpt-3.5-turbo";
 
 const wechaty = WechatyBuilder.build();
@@ -10,21 +13,56 @@ const wechaty = WechatyBuilder.build();
 const server = http.createServer();
 server.listen(8888);
 
-function getMsg(msg) {
-  return axios({
-    method: "post",
-    url: "https://api.openai.com/v1/chat/completions",
-    headers: {
-      Authorization: "Bearer " + apiKey,
-      "Content-Type": "application/json",
+const getMsg = async (msg) => {
+  let text = "";
+  
+  const switchFun = {
+    async '网易云热评'(){
+      const  data  = await axios.get("https://v.api.aa1.cn/api/api-wenan-wangyiyunreping/index.php?aa1=text")
+      text = data.replace(/<[^>]+>/g, '').replace('\n','')
     },
-    data: JSON.stringify({
-      model,
-      messages: [{ role: "user", content: msg }],
-    }),
-    timeout: 20000,
-  });
-}
+    async '一句'(){
+      const  data  = await axios.get("https://cloud.qqshabi.cn/api/hitokoto/hitokoto.php")
+      text = data
+    },
+    async '彩虹屁'(){
+      const  data  = await axios.get("https://cloud.qqshabi.cn/api/rainbow/api.php")
+      text = data.data
+    },
+    async '毒鸡汤'(){
+      const  data  = await axios.get("https://cloud.qqshabi.cn/api/poison/api.php")
+      text = data.data
+    },
+    async '舔狗日记'(){
+      const  data  = await axios.get("https://v.api.aa1.cn/api/tiangou/")
+      text = data.replace(/<[^>]+>/g, '').replace('\n','')
+    },
+    async '一言'(){
+      const  data  = await axios.get("https://v1.hitokoto.cn?encode=json")
+      text = `${data.hitokoto}\n—— ${data.from_who || ""}「${data.from || ""}」`
+    },
+    async default(){
+      const data = await axios({
+        method: "post",
+        url: "https://api.openai.com/v1/chat/completions",
+        headers: {
+          Authorization: "Bearer " + apiKey,
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          model,
+          messages: [{ role: "user", content: msg }],
+        }),
+        timeout: 0,
+      });
+      text = data.choices[0].message.content;
+    }
+  }
+  
+  await (switchFun[msg] || switchFun.default)()
+
+  return text;
+};
 
 let username = "";
 wechaty
@@ -35,39 +73,46 @@ wechaty
       )}`
     )
   )
-  .on("login", (user) =>
-    console.log(`用户名 ${(username = user.name() || "")} 登录成功`)
-  )
+  .on("login", (user) => {
+    console.log(`用户名 ${(username = user.name() || "")} 登录成功`);
+
+    schedule.scheduleJob("* 7 * * *", async () => {
+      console.log("定时任务触发");
+      const room = await wechaty.Room.find({ topic: "前后端开发问题探讨" });
+
+      if (room) {
+        const data = await axios.get(
+          "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
+        );
+
+        await room.say(data.all_data.join("\n"));
+      }
+    });
+  })
   .on("message", async (message) => {
     // 如果是群聊消息
     if (message.room()) {
-      // const type = message.type();
-      const msg = message.text().replace(`@${username}`, "");
+      const msg = message.text().replace(`@${username}`, "").trim();
       const room = await message.room();
       const isMentioned = await message.mentionSelf();
       const contact = message.talker();
       const topic = await room.topic();
-      // const includes = [""]
 
       if (isMentioned) {
         try {
-          const res = await getMsg(msg);
-          console.log(
-            `群号: ${topic}, 用户名: ${contact.name()}, 消息: ${msg},回答: ${
-              res.data.choices[0].message.content
-            }`
-          );
-          room.say(`@${contact.name()} ${res.data.choices[0].message.content}`);
+          const text = await getMsg(msg);
+          console.log( "群号:" + topic + "用户名:" + contact.name() + "消息:" + msg + ",回答:" + text.replaceAll("\n","") );
+          room.say(`@${contact.name()} ${text}`);
         } catch (e) {
           console.log("报错: ", e.message);
-          room.say(`@${contact.name()} 报错了...`);
+          room.say(`@${contact.name()} 出错了，再问我一次吧`);
         }
       }
     } else if (message.text()) {
       // 文字消息
       const msg = message.text();
-      const res = await getMsg(msg);
-      await message.say(res.data.choices[0].message.content);
+      const text = await getMsg(msg);
+      await message.say(text);
     }
   })
   .on("error", (error) => {
