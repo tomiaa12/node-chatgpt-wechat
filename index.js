@@ -5,7 +5,7 @@ import schedule from 'node-schedule';
 
 axios.interceptors.response.use((res) => res.data);
 
-const apiKey = "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";
+const apiKey = "xxx";
 const model = "gpt-3.5-turbo";
 
 const wechaty = WechatyBuilder.build();
@@ -66,26 +66,26 @@ const getMsg = async (msg) => {
 
 let username = "";
 wechaty
-  .on("scan", (qrcode, status) =>
+  .on("scan",async (qrcode, status) => 
     console.log(
       `二维码${status}: https://wechaty.js.org/qrcode/${encodeURIComponent(
         qrcode
       )}`
     )
   )
-  .on("login", (user) => {
+  .on("login", async(user) => {
     console.log(`用户名 ${(username = user.name() || "")} 登录成功`);
 
-    schedule.scheduleJob("* 7 * * *", async () => {
+    schedule.scheduleJob("* 9 * * *", async () => {
       console.log("定时任务触发");
-      const room = await wechaty.Room.find({ topic: "前后端开发问题探讨" });
+      const rooms = await wechaty.Room.findAll({ topic: "前后端开发交流群" });
 
-      if (room) {
+      if (rooms.length) {
         const data = await axios.get(
           "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
         );
 
-        await room.say(data.all_data.join("\n"));
+        await rooms.forEach(room => room.say(data.all_data.join("\n")));
       }
     });
   })
