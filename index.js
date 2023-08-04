@@ -76,7 +76,7 @@ wechaty
   .on("login", async(user) => {
     console.log(`用户名 ${(username = user.name() || "")} 登录成功`);
 
-    schedule.scheduleJob("* 9 * * *", async () => {
+    schedule.scheduleJob("0 9 * * *", async () => {
       console.log("定时任务触发");
       const rooms = await wechaty.Room.findAll({ topic: "前后端开发交流群" });
 
