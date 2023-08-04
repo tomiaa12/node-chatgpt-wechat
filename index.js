@@ -2,6 +2,8 @@ import { WechatyBuilder } from "wechaty";
 import http from "http";
 import axios from "axios";
 import schedule from 'node-schedule';
+import { FileBox } from 'file-box';
+import ultraman from "./ultraman";
 
 /* ----------------  配置  ---------------- */
 
@@ -36,7 +38,13 @@ server.listen(8888);
 
 axios.interceptors.response.use((res) => res.data);
 
+// 对话上下文
 const msgContext = {}
+
+// 奥特曼上下文
+const ultramanContext = {}
+
+const randomInteger = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
 const getMsg = async (msg, id, context) => {
   let text = "";
@@ -66,9 +74,37 @@ const getMsg = async (msg, id, context) => {
       const  data  = await axios.get("https://v1.hitokoto.cn?encode=json")
       text = `${data.hitokoto}\n—— ${data.from_who || ""}「${data.from || ""}」`
     },
-    // '猜奥特曼'(){
+    async '猜奥特曼'(){
+      text = ''
+
+      if (!ultramanContext[id]?.runing) {
+        ultramanContext[id] = {
+          runing: true,
+          index: randomInteger(0, ultraman.length),
+        };
+      }
+
+      const run = async (msg) => {
+        let _id
+        if (message.room()) {
+          const room = await message.room();
+          _id = room.id
+        } else if (message.text()) {
+          _id = message.talker().id
+        }
+
+      }
+
+      wechaty.on('message', run)
+
+      const localImagePath = './ultraman/1.png'; // 替换为本地图片路径
+      const localImageFileBox = FileBox.fromFile(localImagePath);
+
+      await context.say(localImageFileBox)
       
-    // },
+
+      console.log(localImageFileBox,'localImageFileBox')
+    },
     async default(){
       let messages = msgContext[id] || []
       if(maxMsgLength) {
