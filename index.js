@@ -5,15 +5,29 @@ import schedule from 'node-schedule';
 
 axios.interceptors.response.use((res) => res.data);
 
+// openAI key
 const apiKey = "xxx";
+// gpt 模型
 const model = "gpt-3.5-turbo";
+
+// 是否发送早报
+const isSendMorningPaper = true;
+// 发送早报的时间
+const sendMorningPaperTime = "0 9 * * *"
+
+// 查询 gpt 失败时回复的消息
+const queryErrMsg = '出错了，再问我一次吧'
+
+// 自动回复的群名，true 表示所有群都回复
+// const replyRoomTopic = ['前后端开发交流群']
+const replyRoomTopic = true
 
 const wechaty = WechatyBuilder.build();
 
 const server = http.createServer();
 server.listen(8888);
 
-const getMsg = async (msg) => {
+const getMsg = async (msg, id, context) => {
   let text = "";
   
   const switchFun = {
@@ -41,6 +55,9 @@ const getMsg = async (msg) => {
       const  data  = await axios.get("https://v1.hitokoto.cn?encode=json")
       text = `${data.hitokoto}\n—— ${data.from_who || ""}「${data.from || ""}」`
     },
+    // '猜奥特曼'(){
+      
+    // },
     async default(){
       const data = await axios({
         method: "post",
@@ -76,18 +93,20 @@ wechaty
   .on("login", async(user) => {
     console.log(`用户名 ${(username = user.name() || "")} 登录成功`);
 
-    schedule.scheduleJob("0 9 * * *", async () => {
-      console.log("定时任务触发");
-      const rooms = await wechaty.Room.findAll({ topic: "前后端开发交流群" });
-
-      if (rooms.length) {
-        const data = await axios.get(
-          "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
-        );
-
-        await rooms.forEach(room => room.say(data.all_data.join("\n")));
-      }
-    });
+    if(isSendMorningPaper){
+      schedule.scheduleJob(sendMorningPaperTime, async () => {
+        console.log("定时任务触发");
+        const rooms = await wechaty.Room.findAll({ topic: "前后端开发交流群" });
+  
+        if (rooms.length) {
+          const data = await axios.get(
+            "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
+          );
+  
+          await rooms.forEach(room => room.say(data.all_data.join("\n")));
+        }
+      });
+    }
   })
   .on("message", async (message) => {
     // 如果是群聊消息
@@ -97,25 +116,29 @@ wechaty
       const isMentioned = await message.mentionSelf();
       const contact = message.talker();
       const topic = await room.topic();
-
-      if (isMentioned) {
-        try {
-          const text = await getMsg(msg);
-          console.log( "群号:" + topic + "用户名:" + contact.name() + "消息:" + msg + ",回答:" + text.replaceAll("\n","") );
-          room.say(`@${contact.name()} ${text}`);
-        } catch (e) {
-          console.log("报错: ", e.message);
-          room.say(`@${contact.name()} 出错了，再问我一次吧`);
-        }
+      if(!(replyRoomTopic === true || replyRoomTopic.includes(topic))) return;
+      
+      if (!isMentioned) return
+      
+      try {
+        const id = room.id
+        const text = await getMsg(msg, id, room);
+        console.log( "群号:" + topic + "用户名:" + contact.name() + "消息:" + msg + ",回答:" + text.replaceAll("\n","") );
+        room.say(`@${contact.name()} ${text}`);
+      } catch (e) {
+        console.log("报错: ", e.message);
+        room.say(`@${contact.name()} ${queryErrMsg}`);
       }
+
     } else if (message.text()) {
       // 文字消息
       const msg = message.text();
-      const text = await getMsg(msg);
+      const id = message.talker().id
+      const text = await getMsg(msg, id, message);
       await message.say(text);
     }
   })
   .on("error", (error) => {
     console.error("error", error);
-  });
-wechaty.start();
+  })
+  .start();
