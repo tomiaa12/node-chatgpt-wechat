@@ -3,17 +3,22 @@ import http from "http";
 import axios from "axios";
 import schedule from 'node-schedule';
 
-axios.interceptors.response.use((res) => res.data);
+/* ----------------  配置  ---------------- */
 
 // openAI key
 const apiKey = "xxx";
 // gpt 模型
 const model = "gpt-3.5-turbo";
+// 保留对话上下文的消息数量，群消息问题是共享的，A提问，与B提问是在一个上下文中
+const maxMsgLength = 6;
+
 
 // 是否发送早报
 const isSendMorningPaper = true;
 // 发送早报的时间
 const sendMorningPaperTime = "0 9 * * *"
+// 要发送早报的群聊
+const sendMorningPaperToptics = ['回宁远种田', '前后端开发交流群', '开发交流群2群']
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = '出错了，再问我一次吧'
@@ -22,10 +27,16 @@ const queryErrMsg = '出错了，再问我一次吧'
 // const replyRoomTopic = ['前后端开发交流群']
 const replyRoomTopic = true
 
+/* ----------------  配置 END  ---------------- */
+
 const wechaty = WechatyBuilder.build();
 
 const server = http.createServer();
 server.listen(8888);
+
+axios.interceptors.response.use((res) => res.data);
+
+const msgContext = {}
 
 const getMsg = async (msg, id, context) => {
   let text = "";
@@ -59,6 +70,12 @@ const getMsg = async (msg, id, context) => {
       
     // },
     async default(){
+      let messages = msgContext[id] || []
+      if(maxMsgLength) {
+        messages.push({ role: "user", content: msg })
+        messages.length > maxMsgLength && messages.shift()
+      }
+
       const data = await axios({
         method: "post",
         url: "https://api.openai.com/v1/chat/completions",
@@ -68,10 +85,21 @@ const getMsg = async (msg, id, context) => {
         },
         data: JSON.stringify({
           model,
-          messages: [{ role: "user", content: msg }],
+          messages: [
+            {
+              role: "system",
+              content: "请用中文回答，尽可能回答的精简一些"
+            },
+            ...messages
+          ]
         }),
         timeout: 0,
       });
+
+      messages.push(data.choices[0].message)
+      messages.length > maxMsgLength && messages.shift()
+      msgContext[id] = messages
+
       text = data.choices[0].message.content;
     }
   }
@@ -96,7 +124,7 @@ wechaty
     if(isSendMorningPaper){
       schedule.scheduleJob(sendMorningPaperTime, async () => {
         console.log("定时任务触发");
-        const rooms = await wechaty.Room.findAll({ topic: "前后端开发交流群" });
+        const rooms = await wechaty.Room.findAll({ topic: new RegExp(`^${sendMorningPaperToptics.join('|')}$`) });
   
         if (rooms.length) {
           const data = await axios.get(
@@ -124,7 +152,7 @@ wechaty
         const id = room.id
         const text = await getMsg(msg, id, room);
         console.log( "群号:" + topic + "用户名:" + contact.name() + "消息:" + msg + ",回答:" + text.replaceAll("\n","") );
-        room.say(`@${contact.name()} ${text}`);
+        text && room.say(`@${contact.name()} ${text}`);
       } catch (e) {
         console.log("报错: ", e.message);
         room.say(`@${contact.name()} ${queryErrMsg}`);
@@ -135,7 +163,7 @@ wechaty
       const msg = message.text();
       const id = message.talker().id
       const text = await getMsg(msg, id, message);
-      await message.say(text);
+      text && await message.say(text);
     }
   })
   .on("error", (error) => {
