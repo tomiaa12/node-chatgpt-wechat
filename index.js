@@ -20,7 +20,7 @@ const isSendMorningPaper = true;
 // 发送早报的时间
 const sendMorningPaperTime = "0 9 * * *"
 // 要发送早报的群聊
-const sendMorningPaperToptics = ['回宁远种田', '前后端开发交流群', /* '前后端开发交流群1群', '开发交流群2群' */, '马飞测试']
+const sendMorningPaperToptics = ['回宁远种田', '前后端开发交流群', '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天']
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = '出错了，再问我一次吧'
@@ -112,7 +112,7 @@ const getMsg = async (msg, id, message) => {
             room ? await message.say(`游戏结束，现在公布成绩：\n${temp.answerPersons.sort((a,b) => b.n - a.n).map((item,i) => `🏅第${i+1}名：@${item.name}（猜对${item.n}个）`).join('\n')}`) : await message.say(`游戏结束，猜对${temp.answerPersons[0].n}个`)
           }
           delete ultramanContext[id]
-          wechaty.off('message', onMessage)
+          // wechaty.off('message', onMessage)
           return
         }
         temp.index = random()
