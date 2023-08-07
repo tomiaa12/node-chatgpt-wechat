@@ -127,4 +127,80 @@ export default [
     path: "./ultraman/30.png",
     name: "纳伊斯",
   },
+  {
+    path: "./ultraman/31.jpg",
+    name: "捷德",
+  },
+  {
+    path: "./ultraman/32.jpg",
+    name: "希卡利",
+  },
+  {
+    path: "./ultraman/33.jpg",
+    name: "诺亚",
+  },
+  {
+    path: "./ultraman/34.jpg",
+    name: "盖亚",
+  },
+  {
+    path: "./ultraman/35.jpg",
+    name: "梦比优斯",
+  },
+  {
+    path: "./ultraman/36.jpg",
+    name: "雷古洛斯",
+  },
+  {
+    path: "./ultraman/37.jpg",
+    name: "梦比优斯",
+  },
+  {
+    path: "./ultraman/38.jpg",
+    name: "麦克斯",
+  },
+  {
+    path: "./ultraman/39.jpg",
+    name: "杰诺",
+  },
+  {
+    path: "./ultraman/40.jpg",
+    name: "特利迦",
+  },
+  {
+    path: "./ultraman/41.jpg",
+    name: "银河",
+  },
+  {
+    path: "./ultraman/42.jpg",
+    name: "泰迦",
+  },
+  {
+    path: "./ultraman/43.jpg",
+    name: "赛罗",
+  },
+  {
+    path: "./ultraman/44.jpg",
+    name: "维克特利",
+  },
+  {
+    path: "./ultraman/45.jpg",
+    name: "泽塔",
+  },
+  {
+    path: "./ultraman/46.jpg",
+    name: "小金牛",
+  },
+  {
+    path: "./ultraman/47.jpg",
+    name: "泰塔斯",
+  },
+  {
+    path: "./ultraman/48.jpg",
+    name: "罗布",
+  },
+  {
+    path: "./ultraman/49.jpg",
+    name: "格丽桥",
+  },
 ];
