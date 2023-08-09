@@ -149,11 +149,11 @@ export default [
   },
   {
     path: "./ultraman/36.jpg",
-    name: "雷古洛斯",
+    name: "梦比优斯",
   },
   {
     path: "./ultraman/37.jpg",
-    name: "梦比优斯",
+    name: "雷古洛斯",
   },
   {
     path: "./ultraman/38.jpg",
@@ -165,11 +165,11 @@ export default [
   },
   {
     path: "./ultraman/40.jpg",
-    name: "特利迦",
+    name: "银河",
   },
   {
     path: "./ultraman/41.jpg",
-    name: "银河",
+    name: "特利迦",
   },
   {
     path: "./ultraman/42.jpg",
@@ -181,15 +181,15 @@ export default [
   },
   {
     path: "./ultraman/44.jpg",
-    name: "维克特利",
-  },
-  {
-    path: "./ultraman/45.jpg",
     name: "泽塔",
   },
   {
+    path: "./ultraman/45.jpg",
+    name: "维克特利",
+  },
+  {
     path: "./ultraman/46.jpg",
-    name: "小金牛",
+    name: "迪亚波罗",
   },
   {
     path: "./ultraman/47.jpg",
@@ -197,10 +197,46 @@ export default [
   },
   {
     path: "./ultraman/48.jpg",
-    name: "罗布",
+    name: "格丽桥",
   },
   {
     path: "./ultraman/49.jpg",
-    name: "格丽桥",
+    name: "罗布",
+  },
+  {
+    path: "./ultraman/50.jpg",
+    name: "风马",
+  },
+  {
+    path: "./ultraman/51.jpg",
+    name: "罗索",
+  },
+  {
+    path: "./ultraman/52.jpg",
+    name: "捷德",
+  },
+  {
+    path: "./ultraman/53.jpg",
+    name: "托雷基亚",
+  },
+  {
+    path: "./ultraman/54.jpg",
+    name: "杰斯提斯",
+  },
+  {
+    path: "./ultraman/55.jpg",
+    name: "利布特",
+  },
+  {
+    path: "./ultraman/56.jpg",
+    name: "奈克瑟斯",
+  },
+  {
+    path: "./ultraman/57.jpg",
+    name: "镜子骑士",
+  },
+  {
+    path: "./ultraman/58.jpg",
+    name: "火焰战士",
   },
 ];

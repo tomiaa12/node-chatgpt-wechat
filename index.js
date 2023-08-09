@@ -1,5 +1,4 @@
 import { WechatyBuilder } from "wechaty";
-import http from "http";
 import axios from "axios";
 import schedule from 'node-schedule';
 import { FileBox } from 'file-box';
@@ -9,7 +8,7 @@ import ultraman from "./ultraman.js";
 
 // openAI key
 const apiKey = "";
-// gpt 模型
+// gpt 模型, gpt3: gpt-3.5-turbo, gpt4: gpt-4-0613
 const model = "gpt-3.5-turbo";
 // 保留对话上下文的消息数量，群消息问题是共享的，A提问，与B提问是在一个上下文中
 const maxMsgLength = 6;
@@ -30,14 +29,11 @@ const queryErrMsg = '出错了，再问我一次吧'
 const replyRoomTopic = true
 
 // 每次看图猜奥特曼出题数量
-const ultramanNum = 3
+const ultramanNum = 5
 
 /* ----------------  配置 END  ---------------- */
 
 const wechaty = WechatyBuilder.build();
-
-// const server = http.createServer();
-// server.listen(8888);
 
 axios.interceptors.response.use((res) => res.data);
 
@@ -180,8 +176,7 @@ const getMsg = async (msg, id, message) => {
 
       const data = await axios({
         method: "post",
-        // url: "https://api.openai.com/v1/chat/completions",
-        url: "https://api.openai-sb.com/v1/chat/completions",
+        url: "https://api.openai.com/v1/chat/completions",
         headers: {
           Authorization: "Bearer " + apiKey,
           "Content-Type": "application/json",
