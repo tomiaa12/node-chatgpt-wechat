@@ -3,15 +3,20 @@ import axios from "axios";
 import schedule from 'node-schedule';
 import { FileBox } from 'file-box';
 import ultraman from "./ultraman.js";
+import http from "http"
+import { OpenAIStream } from "./OpenAIStream.js";
+
 
 /* ----------------  配置  ---------------- */
 
 // openAI key
 const apiKey = "";
 // gpt 模型, gpt3: gpt-3.5-turbo, gpt4: gpt-4-0613
-const model = "gpt-3.5-turbo";
+const model = "gpt-4-0613";
+// 接口请求地址
+const openAiUrl = 'https://api.openai.com/v1/chat/completions'
 // 保留对话上下文的消息数量，群消息问题是共享的，A提问，与B提问是在一个上下文中
-const maxMsgLength = 6;
+const maxMsgLength = 3;
 
 
 // 是否发送早报
@@ -25,13 +30,16 @@ const sendMorningPaperToptics = ['回宁远种田', '前后端开发交流群', 
 const queryErrMsg = '出错了，再问我一次吧'
 
 // 自动回复的群名，true 表示所有群都回复
-// const replyRoomTopic = ['前后端开发交流群']
-const replyRoomTopic = true
+const replyRoomTopic = sendMorningPaperToptics
+// const replyRoomTopic = true
 
 // 每次看图猜奥特曼出题数量
 const ultramanNum = 5
 
 /* ----------------  配置 END  ---------------- */
+
+http.createServer().listen('8001')
+
 
 const wechaty = WechatyBuilder.build();
 
@@ -173,32 +181,57 @@ const getMsg = async (msg, id, message) => {
         messages.push({ role: "user", content: msg })
         messages.length > maxMsgLength && messages.shift()
       }
-
-      const data = await axios({
-        method: "post",
-        url: "https://api.openai.com/v1/chat/completions",
-        headers: {
-          Authorization: "Bearer " + apiKey,
-          "Content-Type": "application/json",
+      const prompt = [
+        {
+          role: "system",
+          content: `用中文回答,回答的精简一些,当前时间${Date.now()}`
         },
-        data: JSON.stringify({
-          model,
-          messages: [
-            {
-              role: "system",
-              content: "请用中文回答，尽可能回答的精简一些"
-            },
-            ...messages
-          ]
-        }),
-        timeout: 0,
-      });
+        ...messages
+      ]
 
-      messages.push(data.choices[0].message)
+      /* 全量 */
+      // const data = await axios({
+      //   method: "post",
+      //   url: openAiUrl,
+      //   headers: {
+      //     Authorization: "Bearer " + apiKey,
+      //     "Content-Type": "application/json",
+      //   },
+      //   data: JSON.stringify({
+      //     model,
+      //     messages: prompt
+      //   }),
+      //   timeout: 0,
+      // });
+      
+      // messages.push(data.choices[0].message)
+      // messages.length > maxMsgLength && messages.shift()
+      // msgContext[id] = messages
+
+      // text = data.choices[0].message.content;
+
+      /* 全量 --- end */
+
+
+      /* 数据流 */
+      const stream = await OpenAIStream(openAiUrl, prompt, apiKey, model)
+
+      const reader = stream.getReader();
+      let content = ''
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        console.log(value)
+        content += value
+      }
+      console.log(content)
+      messages.push({ role: 'assistant', content })
+      
       messages.length > maxMsgLength && messages.shift()
       msgContext[id] = messages
 
-      text = data.choices[0].message.content;
+      text = content;
+      /* 数据流 --- end */
     }
   }
   
@@ -218,20 +251,20 @@ wechaty
   .on("login", async(user) => {
     console.log(`账号:${(user.name() || "")} 登录成功`);
 
-    if(isSendMorningPaper){
-      schedule.scheduleJob(sendMorningPaperTime, async () => {
+    schedule.scheduleJob(sendMorningPaperTime, async () => {
+      if(isSendMorningPaper){
         console.log("定时任务触发");
         const rooms = await wechaty.Room.findAll({ topic: new RegExp(`^${sendMorningPaperToptics.join('|')}$`) });
-  
+
         if (rooms.length) {
           const data = await axios.get(
             "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
           );
-  
+
           await rooms.forEach(room => room.say(data.all_data.join("\n")));
         }
-      });
-    }
+      }
+    });
   })
   .on("message", async (message) => {
     // 如果是群聊消息
@@ -248,7 +281,7 @@ wechaty
       try {
         const id = room.id
         if(ultramanContext[id]?.runing) return
-        console.log( "群号:" + topic, 'id', id )
+        console.log( "群号:" + topic, "消息:" + msg )
         const text = await getMsg(msg, id, message);
         console.log( "群号:" + topic + "用户名:" + contact.name() + "消息:" + msg + ",回答:" + text.replaceAll("\n","") );
         text && room.say(`@${contact.name()} ${text}`);
