@@ -4,6 +4,8 @@ import schedule from 'node-schedule';
 import ultraman from "./src/ultraman.js";
 import { OpenAIStream } from "./src/openAIStream.js";
 import { guessit, runing } from './src/guessit.js'
+import { FileBox } from 'file-box';
+
 /* ----------------  配置  ---------------- */
 
 // openAI key
@@ -144,8 +146,47 @@ const getMsg = async (msg, id, message) => {
       /* 数据流 --- end */
     }
   }
+
+  const baseStrTrigger = {
+    async '画图'(){
+      const query = msg.replace(/^画图/,'')
+      const { data } = await axios.post("https://www.ai-yuxin.space/fastapi/api/translate", {
+        query,
+        from_lang: "auto",
+        to_lang: "en",
+      });
+
+      const d = await axios.post(
+        "https://www.ai-yuxin.space/fastapi/api/painting/stable_diffusion",
+        {
+          user_id: "163487",
+          token: "72EjYpmr7Hd02b5d",
+          prompt: data,
+          negative_prompt: "",
+          width: 512,
+          height: 512,
+          number: 1,
+          cfg: 7,
+          mode: "toonyou_beta6",
+          method: "Euler a",
+          steps: 25,
+          seed: -1,
+          facial_restoration: false,
+          image: "0",
+          denoising_strength: 0,
+        }
+      );
+      
+      const url = `https://www.ai-yuxin.space/${d.data[0]}`
+      const imageFileBox = FileBox.fromUrl(url);
+      await message.say(imageFileBox)
+
+    }
+  }
+
+  const triggerFun = baseStrTrigger[Object.keys(baseStrTrigger).find(i => new RegExp(`^${i}`).test(msg))]
   
-  await (switchFun[msg] || switchFun.default)()
+  await (switchFun[msg] || triggerFun || switchFun.default)()
 
   return text;
 };
