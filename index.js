@@ -1,12 +1,9 @@
 import { WechatyBuilder } from "wechaty";
 import axios from "axios";
 import schedule from 'node-schedule';
-import { FileBox } from 'file-box';
-import ultraman from "./ultraman.js";
-import http from "http"
-import { OpenAIStream } from "./OpenAIStream.js";
-
-
+import ultraman from "./src/ultraman.js";
+import { OpenAIStream } from "./src/openAIStream.js";
+import { guessit, runing } from './src/guessit.js'
 /* ----------------  配置  ---------------- */
 
 // openAI key
@@ -38,9 +35,6 @@ const ultramanNum = 5
 
 /* ----------------  配置 END  ---------------- */
 
-http.createServer().listen('8001')
-
-
 const wechaty = WechatyBuilder.build();
 
 axios.interceptors.response.use((res) => res.data);
@@ -51,7 +45,6 @@ const msgContext = {}
 // 奥特曼上下文
 const ultramanContext = {}
 
-const randomInteger = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
 const getMsg = async (msg, id, message) => {
   let text = "";
@@ -84,96 +77,15 @@ const getMsg = async (msg, id, message) => {
     async '猜奥特曼'(){
       text = ''
 
-      if (ultramanContext[id]?.runing) return
-
-      // 初始化
-      const temp = ultramanContext[id] = {
-        runing: true,
-        index: -1,
-        step: 0,
-        answerPersons: [],
-      };
-
+      await guessit({
+        name: '看图猜奥特曼',
+        list: ultraman,
+        total: ultramanNum,
+        id,
+        message,
+        wechaty
+      })
       
-      const oldIndex = []
-      const random = () => {
-        const temp = randomInteger(0, ultraman.length - 1)
-        if(oldIndex.includes(temp)) return random()
-
-        oldIndex.push(temp)
-        return temp
-      }
-
-      let timer1 = null, timer2 = null;
-      
-      const sendFileBox = async () => {
-        temp.step++
-        if(temp.step > ultramanNum) {
-          const room = await message.room()
-          if(!temp.answerPersons.length) {
-            await message.say(room ? `😜游戏结束，没人猜对！` : '😜游戏结束，一题都没有猜对！')
-          }else{
-            room ? await message.say(`游戏结束，现在公布成绩：\n${temp.answerPersons.sort((a,b) => b.n - a.n).map((item,i) => `🏅第${i+1}名：@${item.name}（猜对${item.n}个）`).join('\n')}`) : await message.say(`游戏结束，猜对${temp.answerPersons[0].n}个`)
-          }
-          delete ultramanContext[id]
-          // wechaty.off('message', onMessage)
-          return
-        }
-        temp.index = random()
-        await message.say(`第${temp.step}题，每题限时一分钟`)
-        const data = ultraman[temp.index]
-        const path = data.path;
-        const imageFileBox = FileBox.fromFile(path);
-        await message.say(imageFileBox)
-        timer1 = setTimeout(() => {
-          const i = randomInteger(0, data.name.length - 1)
-          message.say(`⏳还剩 30 秒！\n提示：${data.name.split('').map((str, index) => i === index ? str : '◼').join('')}`)
-          timer2 = setTimeout(async () => {
-            await message.say(`😜时间到！没人猜对。答案是「${ data.name }」。`)
-            await sendFileBox()
-          }, 30000)
-        },30000)
-
-      }
-      
-      await message.say(`开始看图猜奥特曼！一共${ultramanNum}题！`)
-      await sendFileBox()
-      let disabled = false;
-
-      const onMessage = async (message) => {
-        if(disabled) return;
-        let _id, msg, baseStr, name = message.talker().name();
-        const room = await message.room();
-
-        if (room) {
-          _id = room.id
-          baseStr = `@${name} `
-        } else if (message.text()) {
-          _id = message.talker().id
-        }
-
-        if(_id !== id) return;
-        
-        msg = message.text();
-
-        if(msg === ultraman[temp.index].name) {
-          disabled = true;
-          clearTimeout(timer1)
-          clearTimeout(timer2)
-          await message.say(`${baseStr || ''}🎉恭喜猜对了！答案是「${ultraman[temp.index].name}」。`);
-          const origin = temp.answerPersons.find(i => i.name === name)
-          if(origin){
-            origin.n++
-          }else{
-            temp.answerPersons.push({ name, n: 1 })
-          }
-          disabled = false;
-          await sendFileBox()
-        }
-      }
-
-      wechaty.on('message', onMessage)
-
     },
     async default(){
       let messages = msgContext[id] || []
@@ -221,10 +133,8 @@ const getMsg = async (msg, id, message) => {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        console.log(value)
         content += value
       }
-      console.log(content)
       messages.push({ role: 'assistant', content })
       
       messages.length > maxMsgLength && messages.shift()
@@ -280,10 +190,10 @@ wechaty
       
       try {
         const id = room.id
-        if(ultramanContext[id]?.runing) return
-        console.log( "群号:" + topic, "消息:" + msg )
+        if(runing[id]) return
+        console.log(`[${topic}] ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} ${contact.name()}:${msg}` )
         const text = await getMsg(msg, id, message);
-        console.log( "群号:" + topic + "用户名:" + contact.name() + "消息:" + msg + ",回答:" + text.replaceAll("\n","") );
+        console.log( `[${topic}]@${contact.name()} ${text.replaceAll("\n","")}` );
         text && room.say(`@${contact.name()} ${text}`);
       } catch (e) {
         console.log("报错: ", e.message);
@@ -296,7 +206,7 @@ wechaty
      
       const id = message.talker().id
 
-      if(ultramanContext[id]?.runing) return
+      if(runing[id]) return
 
       const text = await getMsg(msg, id, message);
       text && await message.say(text);
