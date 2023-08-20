@@ -5,6 +5,7 @@ import ultraman from "./src/ultraman.js";
 import { OpenAIStream } from "./src/openAIStream.js";
 import { guessit, runing } from './src/guessit.js'
 import { FileBox } from 'file-box';
+import lol from '../lol-voice-skin/data.json' assert { type: "json" };
 
 /* ----------------  配置  ---------------- */
 
@@ -13,7 +14,9 @@ const apiKey = "";
 // gpt 模型, gpt3: gpt-3.5-turbo, gpt4: gpt-4-0613
 const model = "gpt-4-0613";
 // 接口请求地址
-const openAiUrl = 'https://api.openai.com/v1/chat/completions'
+// const openAiUrl = 'https://api.openai.com/v1/chat/completions'
+const openAiUrl = 'https://www.ai-yuxin.space/fastapi/api/chat/chatgpt_free'
+
 // 保留对话上下文的消息数量，群消息问题是共享的，A提问，与B提问是在一个上下文中
 const maxMsgLength = 3;
 
@@ -44,13 +47,19 @@ axios.interceptors.response.use((res) => res.data);
 // 对话上下文
 const msgContext = {}
 
-// 奥特曼上下文
-const ultramanContext = {}
-
-
 const getMsg = async (msg, id, message) => {
   let text = "";
-  
+  const guessitLOL = async () => {
+    text = ''
+    await guessit({
+      name: '看图、听音猜LOL英雄',
+      list: lol,
+      total: ultramanNum,
+      id,
+      message,
+      wechaty
+    })
+  }
   const switchFun = {
     async '网易云热评'(){
       const  data  = await axios.get("https://v.api.aa1.cn/api/api-wenan-wangyiyunreping/index.php?aa1=text")
@@ -69,8 +78,8 @@ const getMsg = async (msg, id, message) => {
       text = data.data
     },
     async '舔狗日记'(){
-      const  data  = await axios.get("https://v.api.aa1.cn/api/tiangou/")
-      text = data.replace(/<[^>]+>/g, '').replace('\n','')
+      const  data  = await axios.get("https://cloud.qqshabi.cn/api/tiangou/api.php")
+      text = data
     },
     async '一言'(){
       const  data  = await axios.get("https://v1.hitokoto.cn?encode=json")
@@ -89,6 +98,9 @@ const getMsg = async (msg, id, message) => {
       })
       
     },
+    '猜英雄联盟': guessitLOL,
+    '猜LOL': guessitLOL,
+    '猜lol': guessitLOL,
     async default(){
       let messages = msgContext[id] || []
       if(maxMsgLength) {
@@ -149,6 +161,7 @@ const getMsg = async (msg, id, message) => {
 
   const baseStrTrigger = {
     async '画图'(){
+      text = ''
       const query = msg.replace(/^画图/,'')
       const { data } = await axios.post("https://www.ai-yuxin.space/fastapi/api/translate", {
         query,

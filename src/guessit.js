@@ -31,7 +31,6 @@ export const guessit = async ({
   
   const oldIndex = []
   const random = () => {
-    console.log(list,'list')
     const temp = randomInteger(0, list.length - 1)
     if(oldIndex.includes(temp)) return random()
 
@@ -55,11 +54,19 @@ export const guessit = async ({
       return
     }
     temp.index = random()
-    await message.say(`第${temp.step}题，每题限时一分钟`)
+    
     const data = list[temp.index]
-    const path = data.path;
-    const imageFileBox = FileBox.fromFile(path);
-    await message.say(imageFileBox)
+    await message.say(`第${temp.step}题，每题限时一分钟，${data.topic || ''}`)
+
+    const path = Array.isArray(data.path) ? data.path[randomInteger(0, data.path.length)] : data.path;
+    
+    if(path){
+      const imageFileBox = /^http/.test(path) ? FileBox.fromUrl(path) : FileBox.fromFile(path);
+      await message.say(imageFileBox)
+    }else{
+      await message.say(data.desc)
+    }
+
     timer1 = setTimeout(() => {
       const i = randomInteger(0, data.answer.length - 1)
       message.say(`⏳还剩 30 秒！\n提示：${data.answer.split('').map((str, index) => i === index ? str : '◼').join('')}`)
