@@ -26,7 +26,7 @@ const isSendMorningPaper = true;
 // 发送早报的时间
 const sendMorningPaperTime = "0 9 * * *"
 // 要发送早报的群聊
-const sendMorningPaperToptics = ['回宁远种田', '前后端开发交流群', '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天']
+const sendMorningPaperToptics = ['回宁远种田', '前后端开发交流群', '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天', '有色6212']
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = '出错了，再问我一次吧'
@@ -46,6 +46,9 @@ axios.interceptors.response.use((res) => res.data);
 
 // 对话上下文
 const msgContext = {}
+
+// 画图 token
+let drawToken = '', drawUserId = ''
 
 const getMsg = async (msg, id, message) => {
   let text = "";
@@ -169,31 +172,51 @@ const getMsg = async (msg, id, message) => {
         to_lang: "en",
       });
 
-      const d = await axios.post(
-        "https://www.ai-yuxin.space/fastapi/api/painting/stable_diffusion",
-        {
-          user_id: "163487",
-          token: "72EjYpmr7Hd02b5d",
-          prompt: data,
-          negative_prompt: "",
-          width: 512,
-          height: 512,
-          number: 1,
-          cfg: 7,
-          mode: "toonyou_beta6",
-          method: "Euler a",
-          steps: 25,
-          seed: -1,
-          facial_restoration: false,
-          image: "0",
-          denoising_strength: 0,
-        }
-      );
-      
-      const url = `https://www.ai-yuxin.space/${d.data[0]}`
-      const imageFileBox = FileBox.fromUrl(url);
-      await message.say(imageFileBox)
+      // 刷新 token
+      const getToken = async () => {
+        console.log('画图getoken')
+        const { data } = await axios.post("https://www.ai-yuxin.space/fastapi/api/user/login", {
+          account: "tomiaa",
+          password: "5d86ed1730a40de164175de5c01b85dc",
+        });
+        drawToken = data.token
+        drawUserId = data.user_id
+      }
 
+      const draw = async () => {
+        const d = await axios.post(
+          "https://www.ai-yuxin.space/fastapi/api/painting/stable_diffusion",
+          {
+            user_id: drawUserId,
+            token: drawToken,
+            prompt: data,
+            negative_prompt: "",
+            width: 512,
+            height: 512,
+            number: 1,
+            cfg: 7,
+            mode: "toonyou_beta6",
+            method: "Euler a",
+            steps: 25,
+            seed: -1,
+            facial_restoration: false,
+            image: "0",
+            denoising_strength: 0,
+          }
+        );
+        
+        const url = `https://www.ai-yuxin.space/${d.data[0]}`
+        const imageFileBox = FileBox.fromUrl(url);
+        await message.say(imageFileBox)
+      }
+
+      try{
+        if(!drawToken) await getToken()
+        await draw()
+      }catch{
+        await getToken()
+        await draw()
+      }
     }
   }
 
@@ -224,7 +247,7 @@ wechaty
           const data = await axios.get(
             "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
           );
-
+          if(new Set(data.all_data).size > 1)
           await rooms.forEach(room => room.say(data.all_data.join("\n")));
         }
       }
