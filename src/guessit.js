@@ -42,40 +42,49 @@ export const guessit = async ({
   
   const sendFileBox = async () => {
     temp.step++
-    if(temp.step > total) {
-      const room = await message.room()
-      if(!temp.answerPersons.length) {
-        await message.say(room ? `😜游戏结束，没人猜对！` : '😜游戏结束，一题都没有猜对！')
-      }else{
-        room ? await message.say(`游戏结束，现在公布成绩：\n${temp.answerPersons.sort((a,b) => b.n - a.n).map((item,i) => `🏅第${i+1}名：@${item.name}（猜对${item.n}个）`).join('\n')}`) : await message.say(`游戏结束，猜对${temp.answerPersons[0].n}个`)
+    
+    const send = async () => {
+      if(temp.step > total) {
+        const room = await message.room()
+        if(!temp.answerPersons.length) {
+          await message.say(room ? `😜游戏结束，没人猜对！` : '😜游戏结束，一题都没有猜对！')
+        }else{
+          room ? await message.say(`游戏结束，现在公布成绩：\n${temp.answerPersons.sort((a,b) => b.n - a.n).map((item,i) => `🏅第${i+1}名：@${item.name}（猜对${item.n}个）`).join('\n')}`) : await message.say(`游戏结束，猜对${temp.answerPersons[0].n}个`)
+        }
+        delete context[id]
+        delete runing[id]
+        return
       }
-      delete context[id]
-      delete runing[id]
-      return
+      temp.index = random()
+      
+      const data = list[temp.index]
+      await message.say(`第${temp.step}题，每题限时一分钟，${data.topic || ''}`)
+  
+      const path = Array.isArray(data.path) ? data.path[randomInteger(0, data.path.length)] : data.path;
+      
+      try{
+        if(path){
+          const imageFileBox = /^http/.test(path) ? FileBox.fromUrl(path) : FileBox.fromFile(path);
+          await message.say(imageFileBox)
+        }else{
+          await message.say(data.desc)
+        }
+      }catch{
+        await send()
+        return
+      }
+
+      timer1 = setTimeout(() => {
+        const i = randomInteger(0, data.answer.length - 1)
+        message.say(`⏳还剩 30 秒！\n提示：${data.answer.split('').map((str, index) => i === index ? str : '◼').join('')}`)
+        timer2 = setTimeout(async () => {
+          await message.say(`😜时间到！没人猜对。答案是「${ data.answer }」。`)
+          await sendFileBox()
+        }, 30000)
+      },30000)
     }
-    temp.index = random()
-    
-    const data = list[temp.index]
-    await message.say(`第${temp.step}题，每题限时一分钟，${data.topic || ''}`)
 
-    const path = Array.isArray(data.path) ? data.path[randomInteger(0, data.path.length)] : data.path;
-    
-    if(path){
-      const imageFileBox = /^http/.test(path) ? FileBox.fromUrl(path) : FileBox.fromFile(path);
-      await message.say(imageFileBox)
-    }else{
-      await message.say(data.desc)
-    }
-
-    timer1 = setTimeout(() => {
-      const i = randomInteger(0, data.answer.length - 1)
-      message.say(`⏳还剩 30 秒！\n提示：${data.answer.split('').map((str, index) => i === index ? str : '◼').join('')}`)
-      timer2 = setTimeout(async () => {
-        await message.say(`😜时间到！没人猜对。答案是「${ data.answer }」。`)
-        await sendFileBox()
-      }, 30000)
-    },30000)
-
+    await send()
   }
   
   await message.say(`开始${name}！一共${total}题！`)
