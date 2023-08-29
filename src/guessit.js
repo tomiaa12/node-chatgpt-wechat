@@ -126,5 +126,4 @@ export const guessit = async ({
   }
 
   wechaty.on('message', onMessage)
-
 }
