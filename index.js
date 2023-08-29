@@ -217,6 +217,12 @@ const getMsg = async (msg, id, message) => {
         await getToken()
         await draw()
       }
+    },
+    async '猜'(){
+      const temp = Object.keys(switchFun)
+      if(!temp.includes(msg)){
+        text = `没有找到${msg}，你可以@我+下列关键词：${temp.join('\n')}\n 画图 [描述内容]`
+      }
     }
   }
 
