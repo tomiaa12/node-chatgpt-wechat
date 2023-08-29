@@ -148,6 +148,7 @@ const getMsg = async (msg, id, message) => {
         message,
         wechaty,
         caseSensitive: false,
+        isPrompt: false,
       })
       
     },

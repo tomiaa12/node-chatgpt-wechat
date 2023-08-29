@@ -14,7 +14,8 @@ export const guessit = async ({
   id, // 房间/用户 id
   message, // 消息对象
   wechaty, // 微信
-  caseSensitive = true // 大小写区分
+  caseSensitive = true, // 大小写区分
+  isPrompt = true, // 开启提示
 }) => {
 
   // 是否运行中
@@ -77,7 +78,7 @@ export const guessit = async ({
 
       timer1 = setTimeout(() => {
         const i = randomInteger(0, data.answer.length - 1)
-        message.say(`⏳还剩 30 秒！\n提示：${data.answer.split('').map((str, index) => i === index ? str : '◼').join('')}`)
+        isPrompt && message.say(`⏳还剩 30 秒！\n提示：${data.answer.split('').map((str, index) => i === index ? str : '◼').join('')}`)
         timer2 = setTimeout(async () => {
           await message.say(`😜时间到！没人猜对。答案是「${ data.answer }」。`)
           await sendFileBox()
@@ -127,8 +128,8 @@ export const guessit = async ({
       }else{
         temp.answerPersons.push({ name, n: 1 })
       }
-      disabled = false;
       await sendFileBox()
+      disabled = false;
     }
   }
 
