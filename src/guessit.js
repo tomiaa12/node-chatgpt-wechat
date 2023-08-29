@@ -14,6 +14,7 @@ export const guessit = async ({
   id, // 房间/用户 id
   message, // 消息对象
   wechaty, // 微信
+  caseSensitive = true // 大小写区分
 }) => {
 
   // 是否运行中
@@ -58,7 +59,7 @@ export const guessit = async ({
       temp.index = random()
       
       const data = list[temp.index]
-      await message.say(`第${temp.step}题，每题限时一分钟，${data.topic || ''}`)
+      await message.say(`第${temp.step}题 ${data.topic || ''}`)
   
       const path = Array.isArray(data.path) ? data.path[randomInteger(0, data.path.length)] : data.path;
       
@@ -87,7 +88,7 @@ export const guessit = async ({
     await send()
   }
   
-  await message.say(`开始${name}！一共${total}题！`)
+  await message.say(`开始${name}！一共${total}题！每题限时一分钟。`)
   await sendFileBox()
   let disabled = false;
 
@@ -108,8 +109,14 @@ export const guessit = async ({
     if(_id !== id) return;
     
     msg = message.text();
+    let answer = list[temp.index].answer
 
-    if(msg === list[temp.index].answer) {
+    if(!caseSensitive) {
+      msg = msg.toLowerCase()
+      answer = answer.toLowerCase()
+    }
+
+    if(msg === answer) {
       disabled = true;
       clearTimeout(timer1)
       clearTimeout(timer2)

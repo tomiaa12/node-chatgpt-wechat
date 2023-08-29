@@ -2,6 +2,7 @@ import { WechatyBuilder } from "wechaty";
 import axios from "axios";
 import schedule from 'node-schedule';
 import ultraman from "./src/ultraman.js";
+import jsQuestion from "./src/jsQuestion.js";
 import { OpenAIStream } from "./src/openAIStream.js";
 import { guessit, runing } from './src/guessit.js'
 import { FileBox } from 'file-box';
@@ -40,9 +41,38 @@ const ultramanNum = 5
 
 /* ----------------  配置 END  ---------------- */
 
+const Functions = [
+  '一句',
+  '一言',
+  '彩虹屁',
+  '毒鸡汤',
+  '入群测验',
+  '舔狗日记',
+  '网易云热评',
+  '猜奥特曼',
+  '猜LOL/猜英雄联盟',
+  '画图 + 空格 + 内容',
+  '翻译 + 空格 + 文字',
+]
+
 const wechaty = WechatyBuilder.build();
 
 axios.interceptors.response.use((res) => res.data);
+
+const translate = async (query,to_lang) => axios.post("https://www.ai-yuxin.space/fastapi/api/translate", {
+  query,
+  from_lang: "auto",
+  to_lang,
+});
+
+const morningPaper = async () => {
+  const data = await axios.get(
+    "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
+  );
+  if(new Set(data.all_data).size > 1)
+  return data.all_data.join("\n")
+  else return ''
+}
 
 // 对话上下文
 const msgContext = {}
@@ -70,6 +100,10 @@ const getMsg = async (msg, id, message) => {
     },
     async '一句'(){
       const  data  = await axios.get("https://cloud.qqshabi.cn/api/hitokoto/hitokoto.php")
+      text = data
+    },
+    async '早报'(){
+      const  data  = await morningPaper()
       text = data
     },
     async '彩虹屁'(){
@@ -104,6 +138,19 @@ const getMsg = async (msg, id, message) => {
     '猜英雄联盟': guessitLOL,
     '猜LOL': guessitLOL,
     '猜lol': guessitLOL,
+    async '入群测验'(){
+      text = ''
+      await guessit({
+        name: '入群测验',
+        list: jsQuestion,
+        total: ultramanNum,
+        id,
+        message,
+        wechaty,
+        caseSensitive: false,
+      })
+      
+    },
     async default(){
       let messages = msgContext[id] || []
       if(maxMsgLength) {
@@ -166,11 +213,7 @@ const getMsg = async (msg, id, message) => {
     async '画图'(){
       text = ''
       const query = msg.replace(/^画图/,'')
-      const { data } = await axios.post("https://www.ai-yuxin.space/fastapi/api/translate", {
-        query,
-        from_lang: "auto",
-        to_lang: "en",
-      });
+      const { data } = await translate(query,"en")
 
       // 刷新 token
       const getToken = async () => {
@@ -221,8 +264,14 @@ const getMsg = async (msg, id, message) => {
     async '猜'(){
       const temp = Object.keys(switchFun)
       if(!temp.includes(msg)){
-        text = `没有找到${msg}，你可以@我+下列关键词：${temp.join('\n')}\n 画图 [描述内容]`
+        text = `没有找到${msg}，你可以@我+下列关键词：\n${Functions.join('\n')}`
       }
+    },
+    async '翻译'(){
+      text = ''
+      const query = msg.replace(/^画图/,'')
+      const { data } = await translate(query,"zh")
+      text = data
     }
   }
 
@@ -250,11 +299,8 @@ wechaty
         const rooms = await wechaty.Room.findAll({ topic: new RegExp(`^${sendMorningPaperToptics.join('|')}$`) });
 
         if (rooms.length) {
-          const data = await axios.get(
-            "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
-          );
-          if(new Set(data.all_data).size > 1)
-          await rooms.forEach(room => room.say(data.all_data.join("\n")));
+          const text = await morningPaper()
+          text && await rooms.forEach(room => room.say(text));
         }
       }
     });
