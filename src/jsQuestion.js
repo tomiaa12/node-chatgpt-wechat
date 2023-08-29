@@ -1,4 +1,4 @@
-[
+export default [
   {
       "path": "./src/jsQuestion/1.png",
       "answer": "D"
