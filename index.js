@@ -27,13 +27,13 @@ const isSendMorningPaper = true;
 // 发送早报的时间
 const sendMorningPaperTime = "0 9 * * *"
 // 要发送早报的群聊
-const sendMorningPaperToptics = ['回宁远种田', '前后端开发交流群', '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天', '有色6212']
+const sendMorningPaperToptics = ['回宁远种田',  '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天', ]
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = '出错了，再问我一次吧'
 
 // 自动回复的群名，true 表示所有群都回复
-const replyRoomTopic = sendMorningPaperToptics
+const replyRoomTopic = ['回宁远种田', '前后端开发交流群', '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天']
 // const replyRoomTopic = true
 
 // 每次看图猜奥特曼出题数量
