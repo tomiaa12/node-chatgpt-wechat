@@ -120,6 +120,8 @@ route.get("/hitokoto", async (req, res) => {
 
 /* 静态托管 */
 app.use("/ultraman", express.static(resolve("./src/ultraman")));
+app.use("/jsQuestion", express.static(resolve("./src/jsQuestion")));
+app.use("/lol-voice-skin", express.static(resolve("../lol-voice-skin")));
 
 /* 获取猜一猜列表 */
 route.post("/getGuessit", async (req, res) => {
