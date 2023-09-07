@@ -27,7 +27,7 @@ const pathRewrite = (path, req) => path.replace(req.path, "");
 route.use(express.json());
 
 app.use(async (req, res, next) => {
-  const referer = req.get('Referer');
+  const referer = req.get('Referer') || '';
   if (referer.includes('/pages/chatGPT.html')) {
     res.header("Access-Control-Allow-Origin", req.headers.origin);
 
