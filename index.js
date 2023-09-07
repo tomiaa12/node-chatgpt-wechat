@@ -1,5 +1,4 @@
 import { WechatyBuilder } from "wechaty";
-import axios from "axios";
 import schedule from 'node-schedule';
 import ultraman from "./src/ultraman.js";
 import jsQuestion from "./src/jsQuestion.js";
@@ -7,6 +6,7 @@ import { OpenAIStream } from "./src/openAIStream.js";
 import { guessit, runing } from './src/guessit.js'
 import { FileBox } from 'file-box';
 import lol from '../lol-voice-skin/data.json' assert { type: "json" };
+import { openAiUrl, morningPaper, cloudmusicComment, hitokoto, rainbow, sentence, tiangou, poison } from "./src/api/index.js";
 
 /* ----------------  配置  ---------------- */
 
@@ -14,9 +14,6 @@ import lol from '../lol-voice-skin/data.json' assert { type: "json" };
 const apiKey = "";
 // gpt 模型, gpt3: gpt-3.5-turbo, gpt4: gpt-4-0613
 const model = "gpt-4-0613";
-// 接口请求地址
-// const openAiUrl = 'https://api.openai.com/v1/chat/completions'
-const openAiUrl = 'https://www.ai-yuxin.space/fastapi/api/chat/chatgpt_free'
 
 // 保留对话上下文的消息数量，群消息问题是共享的，A提问，与B提问是在一个上下文中
 const maxMsgLength = 3;
@@ -57,22 +54,11 @@ const Functions = [
 
 const wechaty = WechatyBuilder.build();
 
-axios.interceptors.response.use((res) => res.data);
-
 const translate = async (query,to_lang) => axios.post("https://www.ai-yuxin.space/fastapi/api/translate", {
   query,
   from_lang: "auto",
   to_lang,
 });
-
-const morningPaper = async () => {
-  const data = await axios.get(
-    "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
-  );
-  if(new Set(data.all_data).size > 1)
-  return data.all_data.join("\n")
-  else return ''
-}
 
 // 对话上下文
 const msgContext = {}
@@ -95,11 +81,11 @@ const getMsg = async (msg, id, message) => {
   }
   const switchFun = {
     async '网易云热评'(){
-      const  data  = await axios.get("https://v.api.aa1.cn/api/api-wenan-wangyiyunreping/index.php?aa1=text")
-      text = data.replace(/<[^>]+>/g, '').replace('\n','')
+      const data = await cloudmusicComment()
+      text = data
     },
     async '一句'(){
-      const  data  = await axios.get("https://cloud.qqshabi.cn/api/hitokoto/hitokoto.php")
+      const  data  = await sentence()
       text = data
     },
     async '早报'(){
@@ -107,20 +93,20 @@ const getMsg = async (msg, id, message) => {
       text = data
     },
     async '彩虹屁'(){
-      const  data  = await axios.get("https://cloud.qqshabi.cn/api/rainbow/api.php")
-      text = data.data
+      const  data  = await rainbow()
+      text = data
     },
     async '毒鸡汤'(){
-      const  data  = await axios.get("https://cloud.qqshabi.cn/api/poison/api.php")
-      text = data.data
+      const  data  = await poison()
+      text = data
     },
     async '舔狗日记'(){
-      const  data  = await axios.get("https://cloud.qqshabi.cn/api/tiangou/api.php")
+      const  data  = await tiangou()
       text = data
     },
     async '一言'(){
-      const  data  = await axios.get("https://v1.hitokoto.cn?encode=json")
-      text = `${data.hitokoto}\n—— ${data.from_who || ""}「${data.from || ""}」`
+      const  data  = await hitokoto()
+      text = data
     },
     async '猜奥特曼'(){
       text = ''
