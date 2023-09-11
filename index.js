@@ -36,6 +36,11 @@ const replyRoomTopic = ['回宁远种田', '前后端开发交流群', '前后�
 // 每次看图猜奥特曼出题数量
 const ultramanNum = 5
 
+// 每人每天私聊的次数
+const privateChatNum = 10
+// 私聊次数限制统计
+const privateChatStatic = {}
+
 /* ----------------  配置 END  ---------------- */
 
 const Functions = [
@@ -317,15 +322,21 @@ wechaty
       }
 
     } else if (message.text()) {
+      const id = message.talker().id
+      privateChatStatic[id] ??= 0
+      if(privateChatStatic[id] > privateChatNum){
+        message.say('私聊次数超限，仅支持群内提问或等待第二天9点刷新');
+        return
+      }
+
       // 文字消息
       const msg = message.text();
-     
-      const id = message.talker().id
 
       if(runing[id]) return
 
       const text = await getMsg(msg, id, message);
       text && await message.say(text);
+      
     }
   })
   .on("error", (error) => {
