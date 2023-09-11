@@ -16,6 +16,7 @@ import ultraman from "./src/ultraman.js";
 import jsQuestion from "./src/jsQuestion.js";
 import lol from "../lol-voice-skin/data.json" assert { type: "json" };
 import { resolve } from "path";
+import dayjs from 'dayjs'
 
 const port = 3000;
 
@@ -42,15 +43,16 @@ app.use(async (req, res, next) => {
 
 morgan.token("body", (req) => JSON.stringify(req.body));
 morgan.token("query", (req) => JSON.stringify(req.query));
+morgan.token("now", () => dayjs().format('YYYY-MM-DD HH:mm:ss'));
 
 app.use(
   morgan(`
----------------------------- start -------------------------------\n 
-:remote-addr - [:date[clf]] :method :url :status \n
-:body \n
-:query \n
-:response-time ms :referrer \n
-:user-agent
+------------------------ :now start -------------------------------\n 
+IP[]:remote-addr] :method :url :status \n
+body :body \n
+query :query \n
+耗时[:response-time ms] 来源[:referrer] \n
+设备[:user-agent]
 ----------------------------  end  -------------------------------\n 
   `)
 );

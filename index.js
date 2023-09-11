@@ -7,7 +7,7 @@ import { guessit, runing } from './src/guessit.js'
 import { FileBox } from 'file-box';
 import lol from '../lol-voice-skin/data.json' assert { type: "json" };
 import { openAiUrl, morningPaper, cloudmusicComment, hitokoto, rainbow, sentence, tiangou, poison } from "./src/api/index.js";
-
+import axios from "axios";
 /* ----------------  配置  ---------------- */
 
 // openAI key
