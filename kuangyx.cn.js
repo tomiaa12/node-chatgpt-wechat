@@ -44,6 +44,7 @@ app.use(async (req, res, next) => {
 morgan.token("body", (req) => JSON.stringify(req.body));
 morgan.token("query", (req) => JSON.stringify(req.query));
 morgan.token("now", () => dayjs().format('YYYY-MM-DD HH:mm:ss'));
+morgan.token('remote-addr', (req) => req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress);
 
 app.use(
   morgan(`
