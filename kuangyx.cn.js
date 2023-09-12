@@ -48,7 +48,7 @@ morgan.token("now", () => dayjs().format('YYYY-MM-DD HH:mm:ss'));
 app.use(
   morgan(`
 ------------------------ :now start -------------------------------\n 
-IP[]:remote-addr] :method :url :status \n
+:url IP[:remote-addr] :method  :status \n
 body :body \n
 query :query \n
 耗时[:response-time ms] 来源[:referrer] \n
