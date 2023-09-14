@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { FileBox } from 'file-box';
+import sharp from "sharp";
 
 // 运行中的群或私聊
 export const runing = {}
@@ -66,7 +68,21 @@ export const guessit = async ({
       
       try{
         if(path){
-          const imageFileBox = /^http/.test(path) ? FileBox.fromUrl(path) : FileBox.fromFile(path);
+          let imageFileBox
+          if( /^http/.test(path)) {
+            if(/\.webp$/.test(path)) {
+              const { data } = await axios({
+                url: path,
+                responseType: "arraybuffer",
+              });
+              const buffer = await sharp(data).toFormat('png').toBuffer()
+              imageFileBox = FileBox.fromBuffer(buffer)
+            }else{
+              imageFileBox = FileBox.fromUrl(path)
+            }
+          }else{
+            imageFileBox = FileBox.fromFile(path);
+          }
           await message.say(imageFileBox)
         }else{
           await message.say(data.desc)
