@@ -34,9 +34,9 @@ export const guessit = async ({
 
   
   const oldIndex = []
-  const random = () => {
+  const random = (n = 0) => {
     const temp = randomInteger(0, list.length - 1)
-    if(oldIndex.includes(temp)) return random()
+    if(n < 5 && oldIndex.includes(temp)) return random(n++)
 
     oldIndex.push(temp)
     return temp
@@ -46,7 +46,7 @@ export const guessit = async ({
   
   const sendFileBox = async () => {
     temp.step++
-    
+    let errNum = 0
     const send = async () => {
       if(temp.step > total) {
         const room = await message.room()
@@ -71,12 +71,14 @@ export const guessit = async ({
           let imageFileBox
           if( /^http/.test(path)) {
             if(/\.webp$/.test(path)) {
-              const { data } = await axios({
+              const data = await axios({
                 url: path,
                 responseType: "arraybuffer",
               });
+
               const buffer = await sharp(data).toFormat('png').toBuffer()
-              imageFileBox = FileBox.fromBuffer(buffer)
+              
+              imageFileBox = FileBox.fromBuffer(buffer,'1.png')
             }else{
               imageFileBox = FileBox.fromUrl(path)
             }
@@ -88,7 +90,7 @@ export const guessit = async ({
           await message.say(data.desc)
         }
       }catch{
-        await send()
+        ++errNum < 5 && await send()
         return
       }
 
