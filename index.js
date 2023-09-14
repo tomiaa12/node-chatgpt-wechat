@@ -2,6 +2,7 @@ import { WechatyBuilder } from "wechaty";
 import schedule from 'node-schedule';
 import ultraman from "./src/ultraman.js";
 import jsQuestion from "./src/jsQuestion.js";
+import movie from "./src/movie.js";
 import { OpenAIStream } from "./src/openAIStream.js";
 import { guessit, runing } from './src/guessit.js'
 import { FileBox } from 'file-box';
@@ -129,6 +130,18 @@ const getMsg = async (msg, id, message) => {
     '猜英雄联盟': guessitLOL,
     '猜LOL': guessitLOL,
     '猜lol': guessitLOL,
+    async '猜电影'(){
+      text = ''
+      await guessit({
+        name: '猜电影',
+        list: movie,
+        total: ultramanNum,
+        id,
+        message,
+        wechaty,
+      })
+      
+    },
     async '入群测验'(){
       text = ''
       await guessit({
@@ -230,7 +243,8 @@ const getMsg = async (msg, id, message) => {
             height: 512,
             number: 1,
             cfg: 7,
-            mode: "toonyou_beta6",
+            mode: "realisticVisionV51_v51VAE", // 写实
+            // mode: "toonyou_beta6", // 卡通
             method: "Euler a",
             steps: 25,
             seed: -1,
