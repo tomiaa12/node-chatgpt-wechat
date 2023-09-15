@@ -30,7 +30,6 @@ export const guessit = async ({
     index: -1,
     step: 0, // 当前步骤
     answerPersons: [], // 答对用户名列表
-    answer: null, // 答案
   };
 
   
@@ -56,15 +55,15 @@ export const guessit = async ({
         }else{
           room ? await message.say(`游戏结束，现在公布成绩：\n${temp.answerPersons.sort((a,b) => b.n - a.n).map((item,i) => `🏅第${i+1}名：@${item.name}（猜对${item.n}个）`).join('\n')}`) : await message.say(`游戏结束，猜对${temp.answerPersons[0].n}个`)
         }
+        queue = []
         delete context[id]
         delete runing[id]
+        wechaty.off('message', onMessage)
         return
       }
       temp.index = random()
       
       const data = list[temp.index]
-      temp.index.answer = data.answer
-      await message.say(`第${temp.step}题 ${data.topic || ''}`)
   
       const path = Array.isArray(data.path) ? data.path[randomInteger(0, data.path.length)] : data.path;
       
@@ -88,7 +87,9 @@ export const guessit = async ({
             imageFileBox = FileBox.fromFile(path);
           }
           await message.say(imageFileBox)
+          await message.say(`第${temp.step}题 ${data.topic || ''}`)
         }else{
+          await message.say(`第${temp.step}题 ${data.topic || ''}`)
           await message.say(data.desc)
         }
       }catch{
@@ -105,6 +106,7 @@ export const guessit = async ({
         const i = randomInteger(0, data.answer.length - 1)
         isPrompt && message.say(`⏳还剩 30 秒！\n提示：${data.answer.split('').map((str, index) => i === index ? str : '◼').join('')}`)
         timer2 = setTimeout(async () => {
+          queue = []
           await message.say(`😜时间到！没人猜对。答案是「${ data.answer }」。`)
           await sendFileBox()
         }, 30000)
@@ -117,39 +119,54 @@ export const guessit = async ({
   await message.say(`开始${name}！一共${total}题！每题限时一分钟。`)
   await sendFileBox()
 
+  let queue = []
   const onMessage = async (message) => {
-    let _id, msg, baseStr, name = message.talker().name();
-    const room = await message.room();
-
-    if (room) {
-      _id = room.id
-      baseStr = `@${name} `
-    } else if (message.text()) {
-      _id = message.talker().id
-    }
-
-    if(_id !== id) return;
-    
-    msg = message.text();
-    let answer = temp.answer
-
-    if(!caseSensitive) {
-      msg = msg.toLowerCase()
-      answer = answer.toLowerCase()
-    }
-
-    if(msg === answer) {
-      temp.answer = null // 防止同时发送的消息同时触发正确
-      clearTimeout(timer1)
-      clearTimeout(timer2)
-      await message.say(`${baseStr || ''}🎉恭喜猜对了！答案是「${answer}」。`);
-      const origin = temp.answerPersons.find(i => i.name === name)
-
-      if(origin) origin.n++
-      else temp.answerPersons.push({ name, n: 1 })
-      
-      await sendFileBox()
-    }
+    queue.push(
+      new Promise(
+        async (res) => {
+          try{
+            const continueRun = await queue[queue.length - 1]
+            // 后续的异步队列是否继续判断
+            if(continueRun === false) return res(false)
+  
+            let _id, msg, baseStr, name = message.talker().name();
+            const room = await message.room();
+        
+            if (room) {
+              _id = room.id
+              baseStr = `@${name} `
+            } else if (message.text()) {
+              _id = message.talker().id
+            }
+        
+            if(_id !== id) return;
+            
+            msg = message.text();
+            let answer = list[temp.index].answer
+        
+            if(!caseSensitive) {
+              msg = msg.toLowerCase()
+              answer = answer.toLowerCase()
+            }
+            if(msg === answer) {
+              clearTimeout(timer1)
+              clearTimeout(timer2)
+              await message.say(`${baseStr || ''}🎉恭喜猜对了！答案是「${list[temp.index].answer}」。`);
+              const origin = temp.answerPersons.find(i => i.name === name)
+        
+              if(origin) origin.n++
+              else temp.answerPersons.push({ name, n: 1 })
+              
+              res(false) // 已经有正确答案，队列中的判断全部取消
+              queue = []
+              await sendFileBox()
+            }else res(true)
+          }catch(e) {
+            res(true)
+          }
+        }
+      ) 
+    )
   }
 
   wechaty.on('message', onMessage)
