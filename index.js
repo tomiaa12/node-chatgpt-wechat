@@ -31,7 +31,7 @@ const sendMorningPaperToptics = ['回宁远种田',  '前后端开发交流群1�
 const queryErrMsg = '出错了，再问我一次吧'
 
 // 自动回复的群名，true 表示所有群都回复
-const replyRoomTopic = ['回宁远种田', '前后端开发交流群', '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天']
+const replyRoomTopic = ['回宁远种田', '前后端开发交流群', '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天','还没起床']
 // const replyRoomTopic = true
 
 // 每次看图猜奥特曼出题数量
