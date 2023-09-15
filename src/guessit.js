@@ -30,6 +30,7 @@ export const guessit = async ({
     index: -1,
     step: 0, // 当前步骤
     answerPersons: [], // 答对用户名列表
+    answer: null, // 答案
   };
 
   
@@ -62,6 +63,7 @@ export const guessit = async ({
       temp.index = random()
       
       const data = list[temp.index]
+      temp.index.answer = data.answer
       await message.say(`第${temp.step}题 ${data.topic || ''}`)
   
       const path = Array.isArray(data.path) ? data.path[randomInteger(0, data.path.length)] : data.path;
@@ -114,11 +116,8 @@ export const guessit = async ({
   
   await message.say(`开始${name}！一共${total}题！每题限时一分钟。`)
   await sendFileBox()
-  let disabled = false;
 
   const onMessage = async (message) => {
-
-
     let _id, msg, baseStr, name = message.talker().name();
     const room = await message.room();
 
@@ -132,28 +131,24 @@ export const guessit = async ({
     if(_id !== id) return;
     
     msg = message.text();
-    let answer = list[temp.index].answer
+    let answer = temp.answer
 
     if(!caseSensitive) {
       msg = msg.toLowerCase()
       answer = answer.toLowerCase()
     }
-    
-    if(disabled) return; // 等待上一次message的异步结束
 
     if(msg === answer) {
-      disabled = true;
+      temp.answer = null // 防止同时发送的消息同时触发正确
       clearTimeout(timer1)
       clearTimeout(timer2)
-      await message.say(`${baseStr || ''}🎉恭喜猜对了！答案是「${list[temp.index].answer}」。`);
+      await message.say(`${baseStr || ''}🎉恭喜猜对了！答案是「${answer}」。`);
       const origin = temp.answerPersons.find(i => i.name === name)
-      if(origin){
-        origin.n++
-      }else{
-        temp.answerPersons.push({ name, n: 1 })
-      }
+
+      if(origin) origin.n++
+      else temp.answerPersons.push({ name, n: 1 })
+      
       await sendFileBox()
-      disabled = false;
     }
   }
 
