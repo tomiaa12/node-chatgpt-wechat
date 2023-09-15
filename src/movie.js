@@ -1870,4 +1870,76 @@ export default [
     ],
     answer: "你的名字",
   },
+  {
+    path: [
+      "https://img9.doubanio.com/view/photo/l/public/p2565333066.webp",
+      "https://img2.doubanio.com/view/photo/l/public/p954239741.webp",
+      "https://img1.doubanio.com/view/photo/l/public/p828262688.webp",
+      "https://img9.doubanio.com/view/photo/l/public/p828262656.webp",
+      "https://img1.doubanio.com/view/photo/l/public/p1487874448.webp",
+      "https://img2.doubanio.com/view/photo/l/public/p1214969902.webp",
+      "https://img9.doubanio.com/view/photo/l/public/p828263455.webp",
+    ],
+    answer: "电锯惊魂",
+  },
+  {
+    path: [
+
+    ],
+    answer: "你的名字",
+  },
+  {
+    path: [
+
+    ],
+    answer: "你的名字",
+  },
+  {
+    path: [
+
+    ],
+    answer: "你的名字",
+  },
+  {
+    path: [
+
+    ],
+    answer: "你的名字",
+  },
+  {
+    path: [
+
+    ],
+    answer: "你的名字",
+  },
+  {
+    path: [
+
+    ],
+    answer: "你的名字",
+  },
+  {
+    path: [
+
+    ],
+    answer: "你的名字",
+  },
+  {
+    path: [
+
+    ],
+    answer: "你的名字",
+  },
+  {
+    path: [
+
+    ],
+    answer: "你的名字",
+  },
+  {
+    path: [
+      
+    ],
+    answer: "你的名字",
+  },
 ];

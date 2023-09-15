@@ -90,7 +90,12 @@ export const guessit = async ({
           await message.say(data.desc)
         }
       }catch{
-        ++errNum < 5 && await send()
+        if(++errNum < 5){
+          await send()
+        }else{
+          delete context[id]
+          delete runing[id]
+        }
         return
       }
 
@@ -113,7 +118,6 @@ export const guessit = async ({
 
   const onMessage = async (message) => {
 
-    if(disabled) return; // 等待上一次message的异步结束
 
     let _id, msg, baseStr, name = message.talker().name();
     const room = await message.room();
@@ -134,6 +138,8 @@ export const guessit = async ({
       msg = msg.toLowerCase()
       answer = answer.toLowerCase()
     }
+    
+    if(disabled) return; // 等待上一次message的异步结束
 
     if(msg === answer) {
       disabled = true;
