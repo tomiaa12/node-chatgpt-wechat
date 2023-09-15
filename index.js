@@ -25,7 +25,7 @@ const isSendMorningPaper = true;
 // 发送早报的时间
 const sendMorningPaperTime = "0 9 * * *"
 // 要发送早报的群聊
-const sendMorningPaperToptics = ['回宁远种田',  '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天', ]
+const sendMorningPaperToptics = ['回宁远种田',  '前后端开发交流群1群', '开发交流群2群', '马飞测试', '又是被摩擦的一天', '还没起床']
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = '出错了，再问我一次吧'
