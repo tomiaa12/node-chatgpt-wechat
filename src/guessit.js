@@ -32,13 +32,13 @@ export const guessit = async ({
     answerPersons: [], // 答对用户名列表
   };
 
-  
-  const oldIndex = []
+  // oldIndex 随机过的不在加入随机位
+  // const oldIndex = []
   const random = (n = 0) => {
     const temp = randomInteger(0, list.length - 1)
-    if(n < 5 && oldIndex.includes(temp)) return random(n++)
+    // if(n < 5 && oldIndex.includes(temp)) return random(n++)
 
-    oldIndex.push(temp)
+    // oldIndex.push(temp)
     return temp
   }
 
@@ -157,8 +157,8 @@ export const guessit = async ({
               if(origin) origin.n++
               else temp.answerPersons.push({ name, n: 1 })
               
-              res(false) // 已经有正确答案，队列中的判断全部取消
               queue = []
+              res(false) // 已经有正确答案，队列中的判断全部取消
               await sendFileBox()
             }else res(true)
           }catch(e) {
