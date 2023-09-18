@@ -5,6 +5,7 @@ import jsQuestion from "./src/jsQuestion.js";
 import movie from "./src/movie.js";
 import { OpenAIStream } from "./src/openAIStream.js";
 import { guessit, runing } from './src/guessit.js'
+import twoDimension from "./src/twoDimension.js";
 import { FileBox } from 'file-box';
 import lol from '../lol-voice-skin/data.json' assert { type: "json" };
 import { openAiUrl, morningPaper, cloudmusicComment, hitokoto, rainbow, sentence, tiangou, poison } from "./src/api/index.js";
@@ -141,7 +142,17 @@ const getMsg = async (msg, id, message) => {
         message,
         wechaty,
       })
-      
+    },
+    async '二次元浓度测试'(){
+      text = ''
+      await guessit({
+        name: '二次元浓度测试',
+        list: twoDimension,
+        total: ultramanNum,
+        id,
+        message,
+        wechaty,
+      })
     },
     async '入群测验'(){
       text = ''
