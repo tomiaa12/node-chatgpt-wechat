@@ -14,6 +14,7 @@ import {
 } from "./src/api/index.js";
 import ultraman from "./src/ultraman.js";
 import jsQuestion from "./src/jsQuestion.js";
+import movie from "./src/movie.js";
 import lol from "../lol-voice-skin/data.json" assert { type: "json" };
 import { resolve } from "path";
 import dayjs from 'dayjs'
@@ -125,6 +126,7 @@ route.get("/hitokoto", async (req, res) => {
 app.use("/ultraman", express.static(resolve("./src/ultraman")));
 app.use("/jsQuestion", express.static(resolve("./src/jsQuestion")));
 app.use("/lol-voice-skin", express.static(resolve("../lol-voice-skin")));
+app.use("/movie", express.static(resolve("../movie")));
 
 /* 获取猜一猜列表 */
 route.post("/getGuessit", async (req, res) => {
@@ -132,6 +134,7 @@ route.post("/getGuessit", async (req, res) => {
     ultraman,
     jsQuestion,
     lol,
+    movie,
   };
 
   res.send(data[req.body.type] || []);

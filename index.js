@@ -10,6 +10,7 @@ import { FileBox } from 'file-box';
 import lol from '../lol-voice-skin/data.json' assert { type: "json" };
 import { openAiUrl, morningPaper, cloudmusicComment, hitokoto, rainbow, sentence, tiangou, poison } from "./src/api/index.js";
 import axios from "axios";
+import dayjs from "dayjs";
 /* ----------------  配置  ---------------- */
 
 // openAI key
@@ -56,6 +57,7 @@ const Functions = [
   '猜奥特曼',
   '猜电影',
   '猜LOL/猜英雄联盟',
+  "二次元浓度测试",
   '画图 + 空格 + 内容',
   '翻译 + 空格 + 文字',
 ]
@@ -152,6 +154,8 @@ const getMsg = async (msg, id, message) => {
         id,
         message,
         wechaty,
+        isPrompt: false,
+        caseSensitive: false,
       })
     },
     async '入群测验'(){
@@ -177,7 +181,7 @@ const getMsg = async (msg, id, message) => {
       const prompt = [
         {
           role: "system",
-          content: `用中文回答,回答的精简一些,当前时间${Date.now()}`
+          content: `用中文回答,回答的精简一些,当前时间${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
         },
         ...messages
       ]

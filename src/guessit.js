@@ -9,6 +9,8 @@ const contextAll = {}
 
 const randomInteger = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
+const numberToLetter = (num) => String.fromCharCode('A'.charCodeAt(0) + num);
+
 export const guessit = async ({
   name, // 游戏名称，唯一值
   list, // 文件 + 答案
@@ -90,9 +92,16 @@ export const guessit = async ({
           await message.say(`第${temp.step}题 ${data.topic || ''}`)
         }else{
           await message.say(`第${temp.step}题 ${data.topic || ''}`)
-          await message.say(data.desc)
+          if(data.options?.length) {
+            const randomList = data.options.sort(() => Math.random() - 0.5)
+            const addLetter = randomList.map((item,i) => `${numberToLetter(i)}. ${item}`)
+            data.optionsAnswer = numberToLetter(randomList.findIndex(i => i === data.answer))
+            await message.say(addLetter.join('\n'))
+          }
+          else await message.say(data.desc)
         }
-      }catch{
+      }catch(e){
+        console.log('sendFileBox 报错',e)
         if(++errNum < 5){
           await send()
         }else{
@@ -142,13 +151,14 @@ export const guessit = async ({
             if(_id !== id) return;
             
             msg = message.text();
-            let answer = list[temp.index].answer
+            let answer = list[temp.index].answer, optionsAnswer = list[temp.index].optionsAnswer
         
             if(!caseSensitive) {
               msg = msg.toLowerCase()
               answer = answer.toLowerCase()
+              optionsAnswer = optionsAnswer.toLowerCase()
             }
-            if(msg === answer) {
+            if(msg === answer || msg === optionsAnswer) {
               clearTimeout(timer1)
               clearTimeout(timer2)
               await message.say(`${baseStr || ''}🎉恭喜猜对了！答案是「${list[temp.index].answer}」。`);
