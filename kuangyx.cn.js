@@ -14,6 +14,7 @@ import {
 } from "./src/api/index.js";
 import ultraman from "./src/ultraman.js";
 import jsQuestion from "./src/jsQuestion.js";
+import twoDimension from "./src/twoDimension.js";
 import movie from "./src/movie.js";
 import lol from "../lol-voice-skin/data.json" assert { type: "json" };
 import { resolve } from "path";
@@ -127,6 +128,7 @@ app.use("/ultraman", express.static(resolve("./src/ultraman")));
 app.use("/jsQuestion", express.static(resolve("./src/jsQuestion")));
 app.use("/lol-voice-skin", express.static(resolve("../lol-voice-skin")));
 app.use("/movie", express.static(resolve("../movie")));
+app.use("/twoDimension", express.static(resolve("../twoDimension")));
 
 /* 获取猜一猜列表 */
 route.post("/getGuessit", async (req, res) => {
@@ -135,6 +137,7 @@ route.post("/getGuessit", async (req, res) => {
     jsQuestion,
     lol,
     movie,
+    twoDimension,
   };
 
   res.send(data[req.body.type] || []);
