@@ -89,7 +89,7 @@ export default [
   },
   {
     path: "./src/ultraman/21.png",
-    answer: "艾迪",
+    answer: "爱迪",
   },
   {
     path: "./src/ultraman/22.png",
