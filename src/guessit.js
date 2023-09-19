@@ -68,6 +68,8 @@ export const guessit = async ({
       temp.index = random()
       
       const data = list[temp.index]
+      temp.answer = data.answer
+      temp.answerPersons = data.answerPersons
   
       const path = Array.isArray(data.path) ? data.path[randomInteger(0, data.path.length)] : data.path;
       
@@ -153,17 +155,18 @@ export const guessit = async ({
             if(_id !== id) return;
             
             msg = message.text();
-            let answer = list[temp.index].answer, optionsAnswer = list[temp.index].optionsAnswer
+            let answer = temp.answer, optionsAnswer = temp.optionsAnswer
         
             if(!caseSensitive) {
               msg = msg.toLowerCase()
               answer = answer.toLowerCase()
               optionsAnswer = optionsAnswer.toLowerCase()
             }
+            console.log(msg,'msg',answer,'answer')
             if(msg === answer || msg === optionsAnswer) {
               clearTimeout(timer1)
               clearTimeout(timer2)
-              await message.say(`${baseStr || ''}🎉恭喜猜对了！答案是「${list[temp.index].answer}」。`);
+              await message.say(`${baseStr || ''}🎉恭喜猜对了！答案是「${temp.answer}」。`);
               const origin = temp.answerPersons.find(i => i.name === name)
         
               if(origin) origin.n++
@@ -171,7 +174,7 @@ export const guessit = async ({
               
               queue = []
               res(false) // 已经有正确答案，队列中的判断全部取消
-              await sendFileBox()
+              sendFileBox()
             }else res(true)
           }catch(e) {
             res(true)
