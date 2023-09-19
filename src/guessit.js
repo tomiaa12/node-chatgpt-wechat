@@ -11,6 +11,8 @@ const randomInteger = (min, max) => Math.floor(Math.random() * (max - min + 1)) 
 
 const numberToLetter = (num) => String.fromCharCode('A'.charCodeAt(0) + num);
 
+const medal = ["🥇", "🥈", "🥉", "🏅", "🏅", "🏅", "🏅", "🏅", "🏅", "🏅"];
+
 export const guessit = async ({
   name, // 游戏名称，唯一值
   list, // 文件 + 答案
@@ -55,7 +57,7 @@ export const guessit = async ({
         if(!temp.answerPersons.length) {
           await message.say(room ? `😜游戏结束，没人猜对！` : '😜游戏结束，一题都没有猜对！')
         }else{
-          room ? await message.say(`游戏结束，现在公布成绩：\n${temp.answerPersons.sort((a,b) => b.n - a.n).map((item,i) => `🏅第${i+1}名：@${item.name}（猜对${item.n}个）`).join('\n')}`) : await message.say(`游戏结束，猜对${temp.answerPersons[0].n}个`)
+          room ? await message.say(`游戏结束，现在公布成绩：\n${temp.answerPersons.sort((a,b) => b.n - a.n).map((item,i) => `${medal[i]}第${i+1}名：@${item.name}（猜对${item.n}个）`).join('\n')}`) : await message.say(`游戏结束，猜对${temp.answerPersons[0].n}个`)
         }
         queue = []
         delete context[id]
