@@ -11,6 +11,8 @@ import {
   tiangou,
   hitokoto,
   poison,
+  translate,
+  draw,
 } from "./src/api/index.js";
 import ultraman from "./src/ultraman.js";
 import jsQuestion from "./src/jsQuestion.js";
@@ -120,6 +122,18 @@ route.get("/poison", async (req, res) => {
 /* 一言 */
 route.get("/hitokoto", async (req, res) => {
   const data = await hitokoto();
+  res.send(data);
+});
+
+/* 翻译 */
+route.post("/translate", async (req, res) => {
+  const data = await translate(req.body.query, req.body.to_lang);
+  res.send(data);
+});
+
+/* 画图 */
+route.post("/draw", async (req, res) => {
+  const data = await draw(req.body.query);
   res.send(data);
 });
 
