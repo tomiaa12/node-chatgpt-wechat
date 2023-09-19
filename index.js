@@ -260,7 +260,7 @@ const getMsg = async (msg, id, message) => {
     async 翻译() {
       text = "";
       const query = msg.replace(/^画图/, "");
-      const { data } = await translate(query, "zh");
+      const { data } = await translate(query);
       text = data;
     },
   };

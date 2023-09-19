@@ -42,12 +42,16 @@ export const poison = async () => {
   return data.data;
 };
 
-export const translate = async (query, to_lang) =>
-  axios.post("https://www.ai-yuxin.space/fastapi/api/translate", {
+export const translate = async (query, to_lang) => {
+  if(!to_lang) {
+    to_lang = /[\u4e00-\u9fa5]/g.test(query) ? 'en' : 'zh'
+  }
+  return axios.post("https://www.ai-yuxin.space/fastapi/api/translate", {
     query,
     from_lang: "auto",
     to_lang,
   });
+}
 
 // 画图 token
 let drawToken = "",
