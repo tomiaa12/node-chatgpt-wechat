@@ -52,6 +52,11 @@ export const guessit = async ({
     temp.step++
     let errNum = 0
     const send = async () => {
+      temp.index = random()
+      
+      const data = list[temp.index]
+      temp.answer = data.answer
+
       if(temp.step > total) {
         const room = await message.room()
         if(!temp.answerPersons.length) {
@@ -59,17 +64,15 @@ export const guessit = async ({
         }else{
           room ? await message.say(`游戏结束，现在公布成绩：\n${temp.answerPersons.sort((a,b) => b.n - a.n).map((item,i) => `${medal[i]}第${i+1}名：@${item.name}（猜对${item.n}个）`).join('\n')}`) : await message.say(`游戏结束，猜对${temp.answerPersons[0].n}个`)
         }
-        queue = []
         delete context[id]
         delete runing[id]
+        delete data.optionsAnswer
+        temp.answer = ''
+        queue = []
         wechaty.off('message', onMessage)
         return
       }
-      temp.index = random()
       
-      const data = list[temp.index]
-      temp.answer = data.answer
-      temp.answerPersons = data.answerPersons
   
       const path = Array.isArray(data.path) ? data.path[randomInteger(0, data.path.length)] : data.path;
       
@@ -112,7 +115,7 @@ export const guessit = async ({
           delete context[id]
           delete runing[id]
         }
-        return
+        return 
       }
 
       timer1 = setTimeout(() => {
@@ -126,7 +129,7 @@ export const guessit = async ({
       },30000)
     }
 
-    await send()
+    return await send()
   }
   
   await message.say(`开始${name}！一共${total}题！每题限时一分钟。`)
@@ -162,7 +165,7 @@ export const guessit = async ({
               answer = answer.toLowerCase()
               optionsAnswer = optionsAnswer.toLowerCase()
             }
-            console.log(msg,'msg',answer,'answer')
+            console.log(msg,'msg',answer,'answer',msg === answer || msg === optionsAnswer, queue , continueRun)
             if(msg === answer || msg === optionsAnswer) {
               clearTimeout(timer1)
               clearTimeout(timer2)
@@ -172,9 +175,10 @@ export const guessit = async ({
               if(origin) origin.n++
               else temp.answerPersons.push({ name, n: 1 })
               
-              queue = []
               res(false) // 已经有正确答案，队列中的判断全部取消
-              sendFileBox()
+              await sendFileBox()
+              // 在 sendFileBox 结算单次题目之后再重置异步队列
+              queue = []
             }else res(true)
           }catch(e) {
             res(true)
