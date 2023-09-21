@@ -2192,7 +2192,6 @@ export default [
       "https://img1.doubanio.com/view/photo/l/public/p2169017387.webp",
       "https://img1.doubanio.com/view/photo/l/public/p2046221738.webp",
       "https://img9.doubanio.com/view/photo/l/public/p1983642726.webp",
-      "https://img2.doubanio.com/view/photo/l/public/p2258385661.webp",
       "https://img1.doubanio.com/view/photo/l/public/p2163685700.webp",
       "https://img1.doubanio.com/view/photo/l/public/p2055701918.webp",
       "https://img2.doubanio.com/view/photo/l/public/p2154144093.webp",
