@@ -1,15 +1,16 @@
-import axios from 'axios';
-import { FileBox } from 'file-box';
+import axios from "axios";
+import { FileBox } from "file-box";
 import sharp from "sharp";
 
 // 运行中的群或私聊
-export const runing = {}
+export const runing = {};
 // 上下文
-const contextAll = {}
+const contextAll = {};
 
-const randomInteger = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
+const randomInteger = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
 
-const numberToLetter = (num) => String.fromCharCode('A'.charCodeAt(0) + num);
+const numberToLetter = (num) => String.fromCharCode("A".charCodeAt(0) + num);
 
 const medal = ["🥇", "🥈", "🥉", "🏅", "🏅", "🏅", "🏅", "🏅", "🏅", "🏅"];
 
@@ -23,170 +24,172 @@ export const guessit = async ({
   caseSensitive = true, // 大小写区分
   isPrompt = true, // 开启提示
 }) => {
-
   // 是否运行中
-  if (runing[id]) return
+  if (runing[id]) return;
 
   // 初始化
-  const context = contextAll[name] ??= {}
-  runing[id] = true
-  const temp = context[id] = {
+  const context = (contextAll[name] ??= {});
+  runing[id] = true;
+  const temp = (context[id] = {
     index: -1,
     step: 0, // 当前步骤
     answerPersons: [], // 答对用户名列表
-  };
+  });
 
-  // oldIndex 随机过的不在加入随机位
-  // const oldIndex = []
-  const random = (n = 0) => {
-    const temp = randomInteger(0, list.length - 1)
-    // if(n < 5 && oldIndex.includes(temp)) return random(n++)
+  let timer1 = null,
+    timer2 = null;
 
-    // oldIndex.push(temp)
-    return temp
-  }
-
-  let timer1 = null, timer2 = null;
-  
   const sendFileBox = async () => {
-    temp.step++
-    let errNum = 0
+    let errNum = 0;
     const send = async () => {
-      temp.index = random()
-      
-      const data = list[temp.index]
-      temp.answer = data.answer
+      const data = list[randomInteger(0, list.length - 1)];
+      temp.answer = data.answer;
 
-      if(temp.step > total) {
-        const room = await message.room()
-        if(!temp.answerPersons.length) {
-          await message.say(room ? `😜游戏结束，没人猜对！` : '😜游戏结束，一题都没有猜对！')
-        }else{
-          room ? await message.say(`游戏结束，现在公布成绩：\n${temp.answerPersons.sort((a,b) => b.n - a.n).map((item,i) => `${medal[i]}第${i+1}名：@${item.name}（猜对${item.n}个）`).join('\n')}`) : await message.say(`游戏结束，猜对${temp.answerPersons[0].n}个`)
+      if (++temp.step > total) {
+        const room = message.room();
+        if (!temp.answerPersons.length) {
+          await message.say("😜游戏结束，一题都没有猜对！");
+        } else {
+          await message.say(
+            room
+              ? `游戏结束，现在公布成绩：\n${temp.answerPersons
+                  .sort((a, b) => b.n - a.n)
+                  .map(
+                    (item, i) =>
+                      `${medal[i]}第${i + 1}名：@${item.name}（猜对${
+                        item.n
+                      }个）`
+                  )
+                  .join("\n")}`
+              : `游戏结束，猜对${temp.answerPersons[0].n}个`
+          );
         }
-        delete context[id]
-        delete runing[id]
-        delete data.optionsAnswer
-        temp.answer = ''
-        queue = []
-        wechaty.off('message', onMessage)
-        return
+        delete context[id];
+        delete runing[id];
+        wechaty.off("message", onMessage);
+        return;
       }
-      
-  
-      const path = Array.isArray(data.path) ? data.path[randomInteger(0, data.path.length)] : data.path;
-      
-      try{
-        if(path){
-          let imageFileBox
-          if( /^http/.test(path)) {
-            if(/\.webp$/.test(path)) {
+
+      const path = Array.isArray(data.path)
+        ? data.path[randomInteger(0, data.path.length)]
+        : data.path;
+
+      try {
+        if (path) {
+          let imageFileBox;
+          if (/^http/.test(path)) {
+            if (/\.webp$/.test(path)) {
               const data = await axios({
                 url: path,
                 responseType: "arraybuffer",
               });
 
-              const buffer = await sharp(data).toFormat('png').toBuffer()
-              
-              imageFileBox = FileBox.fromBuffer(buffer,'1.png')
-            }else{
-              imageFileBox = FileBox.fromUrl(path)
+              const buffer = await sharp(data).toFormat("png").toBuffer();
+
+              imageFileBox = FileBox.fromBuffer(buffer, "1.png");
+            } else {
+              imageFileBox = FileBox.fromUrl(path);
             }
-          }else{
+          } else {
             imageFileBox = FileBox.fromFile(path);
           }
-          await message.say(imageFileBox)
-          await message.say(`第${temp.step}题 ${data.topic || ''}`)
-        }else{
-          await message.say(`第${temp.step}题 ${data.topic || ''}`)
-          if(data.options?.length) {
-            const randomList = data.options.sort(() => Math.random() - 0.5)
-            const addLetter = randomList.map((item,i) => `${numberToLetter(i)}. ${item}`)
-            data.optionsAnswer = numberToLetter(randomList.findIndex(i => i === data.answer))
-            await message.say(addLetter.join('\n'))
-          }
-          else await message.say(data.desc)
+          await message.say(imageFileBox);
+          await message.say(`第${temp.step}题 ${data.topic || ""}`);
+        } else {
+          await message.say(`第${temp.step}题 ${data.topic || ""}`);
+          if (data.options?.length) {
+            const randomList = data.options.sort(() => Math.random() - 0.5);
+            const addLetter = randomList.map(
+              (item, i) => `${numberToLetter(i)}. ${item}`
+            );
+            temp.optionsAnswer = numberToLetter(
+              randomList.findIndex((i) => i === data.answer)
+            );
+            await message.say(addLetter.join("\n"));
+          } else await message.say(data.desc);
         }
-      }catch(e){
-        console.log('sendFileBox 报错',e)
-        if(++errNum < 5){
-          await send()
-        }else{
-          delete context[id]
-          delete runing[id]
+      } catch (e) {
+        console.log("sendFileBox 报错", path, data);
+        if (++errNum < 5) {
+          await send();
+        } else {
+          delete context[id];
+          delete runing[id];
         }
-        return 
+        return;
       }
 
-      timer1 = setTimeout(() => {
-        const i = randomInteger(0, data.answer.length - 1)
-        isPrompt && message.say(`⏳还剩 30 秒！\n提示：${data.answer.split('').map((str, index) => i === index ? str : '◼').join('')}`)
+      timer1 = setTimeout(async() => {
+        const i = randomInteger(0, data.answer.length - 1);
+        isPrompt &&
+          await message.say(
+            `⏳还剩 30 秒！\n提示：${data.answer
+              .split("")
+              .map((str, index) => (i === index ? str : "◼"))
+              .join("")}`
+          );
         timer2 = setTimeout(async () => {
-          queue = []
-          await message.say(`😜时间到！没人猜对。答案是「${ data.answer }」。`)
-          await sendFileBox()
-        }, 30000)
-      },30000)
+          delete temp.answer
+          await message.say(`😜时间到！没人猜对。答案是「${data.answer}」。`);
+          await sendFileBox();
+        }, 30000);
+      }, 30000);
+    };
+
+    return await send();
+  };
+
+  await message.say(`开始${name}！一共${total}题！每题限时一分钟。`);
+  await sendFileBox();
+
+  const onMessage = async (message) => {
+    let _id,
+      msg,
+      baseStr,
+      name = message.talker().name();
+    const room = message.room();
+
+    if (room) {
+      _id = room.id;
+      baseStr = `@${name} `;
+    } else if (message.text()) {
+      _id = message.talker().id;
     }
 
-    return await send()
-  }
-  
-  await message.say(`开始${name}！一共${total}题！每题限时一分钟。`)
-  await sendFileBox()
+    if (_id !== id) return;
 
-  let queue = []
-  const onMessage = async (message) => {
-    queue.push(
-      new Promise(
-        async (res) => {
-          try{
-            const continueRun = await queue[queue.length - 1]
-            // 后续的异步队列是否继续判断
-            if(continueRun === false) return res(false)
-  
-            let _id, msg, baseStr, name = message.talker().name();
-            const room = await message.room();
-        
-            if (room) {
-              _id = room.id
-              baseStr = `@${name} `
-            } else if (message.text()) {
-              _id = message.talker().id
-            }
-        
-            if(_id !== id) return;
-            
-            msg = message.text();
-            let answer = temp.answer, optionsAnswer = temp.optionsAnswer
-        
-            if(!caseSensitive) {
-              msg = msg.toLowerCase()
-              answer = answer.toLowerCase()
-              optionsAnswer = optionsAnswer.toLowerCase()
-            }
-            console.log(msg,'msg',answer,'answer',msg === answer || msg === optionsAnswer, queue , continueRun)
-            if(msg === answer || msg === optionsAnswer) {
-              clearTimeout(timer1)
-              clearTimeout(timer2)
-              await message.say(`${baseStr || ''}🎉恭喜猜对了！答案是「${temp.answer}」。`);
-              const origin = temp.answerPersons.find(i => i.name === name)
-        
-              if(origin) origin.n++
-              else temp.answerPersons.push({ name, n: 1 })
-              
-              res(false) // 已经有正确答案，队列中的判断全部取消
-              await sendFileBox()
-              // 在 sendFileBox 结算单次题目之后再重置异步队列
-              queue = []
-            }else res(true)
-          }catch(e) {
-            res(true)
-          }
-        }
-      ) 
-    )
-  }
+    msg = message.text();
+    let answer = temp.answer,
+      optionsAnswer = temp.optionsAnswer;
 
-  wechaty.on('message', onMessage)
-}
+    if (!caseSensitive) {
+      msg = msg.toLowerCase();
+      answer = answer.toLowerCase();
+      optionsAnswer = optionsAnswer.toLowerCase();
+    }
+    console.log(
+      msg,
+      "msg",
+      answer,
+      "answer",
+      msg === answer || msg === optionsAnswer,
+    );
+    if (msg === answer || msg === optionsAnswer) {
+      delete temp.optionsAnswer
+      delete temp.answer
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      await message.say(
+        `${baseStr || ""}🎉恭喜猜对了！答案是「${answer}」。`
+      );
+      const origin = temp.answerPersons.find((i) => i.name === name);
+
+      if (origin) origin.n++;
+      else temp.answerPersons.push({ name, n: 1 });
+
+      await sendFileBox();
+    }
+  };
+
+  wechaty.on("message", onMessage);
+};

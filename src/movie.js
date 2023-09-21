@@ -1434,7 +1434,6 @@ export default [
   },
   {
     path: [
-      "https://img2.doubanio.com/view/photo/l/public/p1781561802.webp",
       "https://img2.doubanio.com/view/photo/l/public/p1536660611.webp",
       "https://img9.doubanio.com/view/photo/l/public/p1591878315.webp",
       "https://img2.doubanio.com/view/photo/l/public/p1556333912.webp",

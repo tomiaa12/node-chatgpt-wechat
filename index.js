@@ -60,7 +60,7 @@ const replyRoomTopic = [
 const ultramanNum = 5;
 
 // 每人每天私聊的次数
-const privateChatNum = 10;
+const privateChatNum = 4
 // 私聊次数限制统计
 const privateChatStatic = {};
 
