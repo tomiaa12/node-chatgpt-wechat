@@ -6,12 +6,12 @@ axios.interceptors.response.use((res) => res.data);
 export const openAiUrl =
   "https://www.ai-yuxin.space/fastapi/api/chat/chatgpt_free";
 
-export const morningPaper = async () => {
+export const morningPaper = async (sendErr) => {
   const data = await axios.get(
     "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
   );
   if (new Set(data.all_data).size > 1) return data.all_data.join("\n");
-  else return "";
+  else return sendErr ? '出错啦' : "";
 };
 
 export const cloudmusicComment = async () => {
@@ -87,8 +87,8 @@ export const draw = async (query) => {
         height: 712,
         number: 1,
         cfg: 7,
-        mode: "realisticVisionV51_v51VAE", // 写实
-        // mode: "toonyou_beta6", // 卡通
+        // mode: "realisticVisionV51_v51VAE", // 写实
+        mode: "toonyou_beta6", // 卡通
         method: "Euler a",
         steps: 25,
         seed: -1,
