@@ -38,8 +38,7 @@ const sendMorningPaperTime = "0 9 * * *";
 // 要发送早报的群聊
 const sendMorningPaperToptics = [
   "回宁远种田",
-  "前后端开发交流群1群",
-  "开发交流群2群",
+  "前后端技术交流群",
 ];
 
 // 查询 gpt 失败时回复的消息
@@ -48,11 +47,9 @@ const queryErrMsg = "出错了，再问我一次吧";
 // 自动回复的群名，true 表示所有群都回复
 const replyRoomTopic = [
   "前公司吃瓜唠嗑群",
-  "前后端开发交流群1群",
-  "开发交流群2群",
+  "前后端技术交流群",
   "马飞测试",
   "又是被摩擦的一天",
-  "还没起床",
 ];
 // const replyRoomTopic = true
 
@@ -67,6 +64,7 @@ const privateChatStatic = {};
 /* ----------------  配置 END  ---------------- */
 
 const Functions = [
+  "早报",
   "一句",
   "一言",
   "彩虹屁",
@@ -110,7 +108,7 @@ const getMsg = async (msg, id, message) => {
       text = data;
     },
     async 早报() {
-      const data = await morningPaper();
+      const data = await morningPaper(true);
       text = data;
     },
     async 彩虹屁() {
