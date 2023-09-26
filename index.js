@@ -39,6 +39,7 @@ const sendMorningPaperTime = "0 9 * * *";
 const sendMorningPaperToptics = [
   "回宁远种田",
   "前后端技术交流群",
+  "智慧眼价值中台前端组"
 ];
 
 // 查询 gpt 失败时回复的消息
@@ -50,6 +51,7 @@ const replyRoomTopic = [
   "前后端技术交流群",
   "马飞测试",
   "又是被摩擦的一天",
+  "智慧眼价值中台前端组"
 ];
 // const replyRoomTopic = true
 
