@@ -41,11 +41,11 @@ export const guessit = async ({
 
   const sendFileBox = async () => {
     let errNum = 0;
-    const send = async () => {
+    const send = async (isErr) => {
       const data = list[randomInteger(0, list.length - 1)];
       temp.answer = data.answer;
-
-      if (++temp.step > total) {
+      if(!isErr) ++temp.step
+      if (temp.step > total) {
         const room = message.room();
         if (!temp.answerPersons.length) {
           await message.say("😜游戏结束，一题都没有猜对！");
@@ -111,7 +111,7 @@ export const guessit = async ({
       } catch (e) {
         console.log("sendFileBox 报错", path, data);
         if (++errNum < 5) {
-          await send();
+          await send(true);
         } else {
           delete context[id];
           delete runing[id];
