@@ -5,16 +5,17 @@ import { FileBox } from "file-box";
 import axios from "axios";
 import { randomInteger } from "./guessit.js";
 import path from "path";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
 const email = "";
 const password = "";
 const playlistId = "8757528656"; // 歌单ID
+const realIP = "116.25.146.159";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const cachePath = path.resolve(__dirname, './cache')
-const cookiePath = path.resolve(__dirname, '.cookie')
+const cachePath = path.resolve(__dirname, "./cache");
+const cookiePath = path.resolve(__dirname, ".cookie");
 
 const {
   login: loginEmail,
@@ -34,6 +35,7 @@ const init = async () => {
     const result = await loginEmail({
       email,
       password,
+      realIP,
     });
 
     fs.writeFileSync(cookiePath, result.body.cookie);
@@ -46,6 +48,7 @@ const init = async () => {
     console.log("cookie已存在");
     const result = await login_status({
       cookie,
+      realIP,
     });
     console.log("校验cookie完成");
     if (!result.body.data.profile) login();
@@ -58,6 +61,7 @@ const init = async () => {
   const data = await song_detail({
     ids: body.playlist.trackIds.map((i) => i.id).join(","),
     cookie,
+    realIP,
   });
   list = data.body.songs;
 };
@@ -69,18 +73,18 @@ export const musicList = list.map((i) => ({
   answer: i.name,
   id: i.id,
   singer: i.ar.map((i) => i.name).join("/"),
-  time: i.dt
+  time: i.dt,
 }));
 
 export const getFileBox = async ({ id, time }) => {
   let mp3Data;
-  console.log(time,'time')
-  const mp3Path = path.resolve(__dirname,`./cache/${id}.mp3`);
+
+  const mp3Path = path.resolve(__dirname, `./cache/${id}.mp3`);
   if (fs.existsSync(mp3Path)) {
     console.log("音乐已存在", id);
     mp3Data = fs.readFileSync(mp3Path);
   } else {
-    const { body } = await check_music({ id, cookie });
+    const { body } = await check_music({ id, cookie, realIP });
     if (!body.success) throw new Error(body);
     console.log("校验完成");
 
@@ -88,6 +92,7 @@ export const getFileBox = async ({ id, time }) => {
       id,
       cookie,
       level: "standard",
+      realIP,
     });
     const inputUrl = data.body.data[0].url;
 
@@ -118,7 +123,10 @@ export const getFileBox = async ({ id, time }) => {
 
   const outputData = result.MEMFS[0].data.buffer; // 将 outputData 转换为 ArrayBuffer
 
-  const outputFileBox = FileBox.fromBuffer(Buffer.from(outputData),'music.mp3');
+  const outputFileBox = FileBox.fromBuffer(
+    Buffer.from(outputData),
+    "music.mp3"
+  );
 
   // const outputFilePath = "./1.mp3";
 
