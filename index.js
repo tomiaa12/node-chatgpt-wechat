@@ -8,6 +8,7 @@ import { guessit, runing } from "./src/guessit.js";
 import twoDimension from "./src/twoDimension.js";
 import { FileBox } from "file-box";
 import lol from "../lol-voice-skin/data.json" assert { type: "json" };
+import { musicList, getFileBox } from './src/cloudMusic.js'
 import {
   openAiUrl,
   morningPaper,
@@ -49,6 +50,7 @@ const queryErrMsg = "出错了，再问我一次吧";
 const replyRoomTopic = [
   "前公司吃瓜唠嗑群",
   "前后端技术交流群",
+  "回宁远种田",
   "马飞测试",
   "又是被摩擦的一天",
   "智慧眼价值中台前端组"
@@ -179,6 +181,20 @@ const getMsg = async (msg, id, message) => {
         wechaty,
         caseSensitive: false,
         isPrompt: false,
+      });
+    },
+    
+    async 猜音乐() {
+      text = "";
+      await guessit({
+        name: "猜音乐",
+        list: musicList,
+        total: ultramanNum,
+        id,
+        message,
+        wechaty,
+        caseSensitive: false,
+        getFileBox
       });
     },
     async default() {

@@ -7,7 +7,7 @@ export const runing = {};
 // 上下文
 const contextAll = {};
 
-const randomInteger = (min, max) =>
+export const randomInteger = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 const numberToLetter = (num) => String.fromCharCode("A".charCodeAt(0) + num);
@@ -23,6 +23,7 @@ export const guessit = async ({
   wechaty, // 微信
   caseSensitive = true, // 大小写区分
   isPrompt = true, // 开启提示
+  getFileBox, // 获取文件
 }) => {
   // 是否运行中
   if (runing[id]) return;
@@ -95,6 +96,10 @@ export const guessit = async ({
           }
           await message.say(imageFileBox);
           await message.say(`第${temp.step}题 ${data.topic || ""}`);
+        } else if(getFileBox){
+          await message.say(await getFileBox(data));
+          await message.say(`第${temp.step}题 ${data.topic || ""}`);
+
         } else {
           await message.say(`第${temp.step}题 ${data.topic || ""}`);
           if (data.options?.length) {
@@ -165,7 +170,7 @@ export const guessit = async ({
     if (!caseSensitive) {
       msg = msg.toLowerCase();
       answer = answer.toLowerCase();
-      optionsAnswer = optionsAnswer.toLowerCase();
+      optionsAnswer = optionsAnswer?.toLowerCase();
     }
     console.log(
       msg,
