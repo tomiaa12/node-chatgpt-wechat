@@ -4,7 +4,7 @@ axios.interceptors.response.use((res) => res.data);
 
 // const openAiUrl = 'https://api.openai.com/v1/chat/completions'
 export const openAiUrl =
-  "https://www.ai-yuxin.space/fastapi/api/chat/chatgpt_free";
+  "https://www.ai-yuxin.space/fastapi/api/chat";
 
 export const morningPaper = async (sendErr) => {
   const data = await axios.get(

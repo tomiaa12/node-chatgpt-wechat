@@ -27,7 +27,7 @@ import dayjs from "dayjs";
 // openAI key
 const apiKey = "";
 // gpt 模型, gpt3: gpt-3.5-turbo, gpt4: gpt-4-0613
-const model = "gpt-4-0613";
+const model = "gpt-3.5-turbo";
 
 // 保留对话上下文的消息数量，群消息问题是共享的，A提问，与B提问是在一个上下文中
 const maxMsgLength = 3;
@@ -40,7 +40,6 @@ const sendMorningPaperTime = "0 9 * * *";
 const sendMorningPaperToptics = [
   "回宁远种田",
   "前后端技术交流群",
-  "智慧眼价值中台前端组"
 ];
 
 // 查询 gpt 失败时回复的消息
