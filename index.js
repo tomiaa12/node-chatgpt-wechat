@@ -77,6 +77,7 @@ const Functions = [
   "网易云热评",
   "猜奥特曼",
   "猜电影",
+  "猜歌名/猜歌曲/猜音乐",
   "猜LOL/猜英雄联盟",
   "二次元浓度测试",
   "画图 + 空格 + 内容",
@@ -103,6 +104,25 @@ const getMsg = async (msg, id, message) => {
       wechaty,
     });
   };
+
+  const guessitMusic = async () => {
+    text = "";
+    if(!isCloudMusicInit) {
+      await init()
+      isCloudMusicInit = true
+    }
+    await guessit({
+      name: "听音猜歌名",
+      list: musicList,
+      total: ultramanNum,
+      id,
+      message,
+      wechaty,
+      caseSensitive: false,
+      getFileBox,
+      formatAnswer: ({ answer, singer }) => `《${answer}》 -- ${singer}`,
+    });
+  }
   const switchFun = {
     async 网易云热评() {
       const data = await cloudmusicComment();
@@ -147,6 +167,9 @@ const getMsg = async (msg, id, message) => {
     猜英雄联盟: guessitLOL,
     猜LOL: guessitLOL,
     猜lol: guessitLOL,
+    猜歌名: guessitMusic,
+    猜音乐: guessitMusic,
+    猜歌曲: guessitMusic,
     async 猜电影() {
       text = "";
       await guessit({
@@ -182,25 +205,6 @@ const getMsg = async (msg, id, message) => {
         wechaty,
         caseSensitive: false,
         isPrompt: false,
-      });
-    },
-    
-    async 猜音乐() {
-      text = "";
-      if(!isCloudMusicInit) {
-        await init()
-        isCloudMusicInit = true
-      }
-      await guessit({
-        name: "猜音乐",
-        list: musicList,
-        total: ultramanNum,
-        id,
-        message,
-        wechaty,
-        caseSensitive: false,
-        getFileBox,
-        formatAnswer: ({ answer, singer }) => `《${answer}》 -- ${singer}`,
       });
     },
     async default() {

@@ -65,13 +65,14 @@ export const init = async () => {
   });
 
   musicList = data.body.songs.map((i) => ({
-    answer: i.name,
+    answer: i.name.replace(/\（.*?\）/g,'').replace(/\(.*?\)/g,'').trim(),
     id: i.id,
     singer: i.ar.map((i) => i.name).join("/"),
     time: i.dt,
   }));
 
   console.log(`歌单列表获取完成，共${musicList.length}首`);
+  // console.log(JSON.stringify(musicList));
 };
 
 export const getFileBox = async ({ id, time }) => {
@@ -133,4 +134,5 @@ export const getFileBox = async ({ id, time }) => {
   // console.log("音频截取完成，输出文件路径:", outputFilePath);
   return Promise.resolve(outputFileBox);
 };
+// init()
 // getFileBox(musicList[0]);
