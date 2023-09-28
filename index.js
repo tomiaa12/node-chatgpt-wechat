@@ -199,7 +199,8 @@ const getMsg = async (msg, id, message) => {
         message,
         wechaty,
         caseSensitive: false,
-        getFileBox
+        getFileBox,
+        formatAnswer: ({ answer, singer }) => `《${answer}》 -- ${singer}`,
       });
     },
     async default() {

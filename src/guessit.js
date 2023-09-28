@@ -24,6 +24,7 @@ export const guessit = async ({
   caseSensitive = true, // 大小写区分
   isPrompt = true, // 开启提示
   getFileBox, // 获取文件
+  formatAnswer, // 答案公布格式化
 }) => {
   // 是否运行中
   if (runing[id]) return;
@@ -39,11 +40,11 @@ export const guessit = async ({
 
   let timer1 = null,
     timer2 = null;
-
+  let data
   const sendFileBox = async () => {
     let errNum = 0;
     const send = async (isErr) => {
-      const data = list[randomInteger(0, list.length - 1)];
+      data = list[randomInteger(0, list.length - 1)];
       temp.answer = data.answer;
       if(!isErr) ++temp.step
       if (temp.step > total) {
@@ -135,7 +136,7 @@ export const guessit = async ({
           );
         timer2 = setTimeout(async () => {
           delete temp.answer
-          await message.say(`😜时间到！没人猜对。答案是「${data.answer}」。`);
+          await message.say(`😜时间到！没人猜对。答案是${formatAnswer ? formatAnswer(data) : '「' + data.answer + '」' }`);
           await sendFileBox();
         }, 30000);
       }, 30000);
@@ -185,7 +186,7 @@ export const guessit = async ({
       clearTimeout(timer1);
       clearTimeout(timer2);
       await message.say(
-        `${baseStr || ""}🎉恭喜猜对了！答案是「${answer}」。`
+        `${baseStr || ""}🎉恭喜猜对了！答案是${formatAnswer ? formatAnswer(data) : '「' + data.answer + '」' }。`
       );
       const origin = temp.answerPersons.find((i) => i.name === name);
 
