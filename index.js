@@ -187,7 +187,10 @@ const getMsg = async (msg, id, message) => {
     
     async 猜音乐() {
       text = "";
-      if(isCloudMusicInit) await init()
+      if(!isCloudMusicInit) {
+        await init()
+        isCloudMusicInit = true
+      }
       await guessit({
         name: "猜音乐",
         list: musicList,

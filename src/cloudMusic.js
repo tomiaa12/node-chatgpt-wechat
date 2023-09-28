@@ -26,7 +26,6 @@ const {
   song_detail,
 } = pkg;
 
-let list = [];
 let cookie;
 export let musicList = []
 
