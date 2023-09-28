@@ -8,7 +8,7 @@ import { guessit, runing } from "./src/guessit.js";
 import twoDimension from "./src/twoDimension.js";
 import { FileBox } from "file-box";
 import lol from "../lol-voice-skin/data.json" assert { type: "json" };
-import { musicList, getFileBox } from './src/cloudMusic.js'
+import { musicList, getFileBox, init } from './src/cloudMusic.js'
 import {
   openAiUrl,
   morningPaper,
@@ -87,6 +87,8 @@ const wechaty = WechatyBuilder.build();
 
 // 对话上下文
 const msgContext = {};
+
+let isCloudMusicInit = false;
 
 const getMsg = async (msg, id, message) => {
   let text = "";
@@ -185,6 +187,7 @@ const getMsg = async (msg, id, message) => {
     
     async 猜音乐() {
       text = "";
+      if(isCloudMusicInit) await init()
       await guessit({
         name: "猜音乐",
         list: musicList,

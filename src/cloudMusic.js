@@ -29,7 +29,7 @@ const {
 let list = [];
 let cookie;
 
-const init = async () => {
+export const init = async () => {
   const login = async () => {
     console.log("网易云登录");
     const result = await loginEmail({
@@ -65,7 +65,6 @@ const init = async () => {
   });
   list = data.body.songs;
 };
-await init();
 
 console.log(`歌单列表获取完成，共${list.length}首`);
 
