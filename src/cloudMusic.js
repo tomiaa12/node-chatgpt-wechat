@@ -28,6 +28,7 @@ const {
 
 let list = [];
 let cookie;
+export let musicList = []
 
 export const init = async () => {
   const login = async () => {
@@ -63,17 +64,16 @@ export const init = async () => {
     cookie,
     realIP,
   });
-  list = data.body.songs;
+
+  musicList = data.body.songs.map((i) => ({
+    answer: i.name,
+    id: i.id,
+    singer: i.ar.map((i) => i.name).join("/"),
+    time: i.dt,
+  }));
+
+  console.log(`歌单列表获取完成，共${musicList.length}首`);
 };
-
-console.log(`歌单列表获取完成，共${list.length}首`);
-
-export const musicList = list.map((i) => ({
-  answer: i.name,
-  id: i.id,
-  singer: i.ar.map((i) => i.name).join("/"),
-  time: i.dt,
-}));
 
 export const getFileBox = async ({ id, time }) => {
   let mp3Data;
