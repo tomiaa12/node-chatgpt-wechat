@@ -29,16 +29,17 @@ export const OpenAIStream = async (openAiUrl, msg, apiKey, model) => {
 
           try {
             const json = JSON.parse(data);
-            if (json.choices[0].finish_reason === "stop") {
+            if(!json.choices[0]) return
+            if (json.choices[0]?.finish_reason === "stop") {
               controller.close();
               return;
             }
-            const text = json.choices[0].delta.content;
+            const text = json.choices[0].delta.content || '';
             const queue = encoder.encode(text);
             controller.enqueue(text);
             // controller.enqueue(queue);
           } catch (e) {
-            controller.error(e);
+            console.log(e,'gpt error');
           }
         }
       };
