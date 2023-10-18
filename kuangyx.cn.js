@@ -65,23 +65,45 @@ query :query \n
 /* gpt 代理 */
 route.post(
   "/gpt",
-  createProxyMiddleware({
-    target: openAiUrl,
-    changeOrigin: true,
-    pathRewrite,
-    selfHandleResponse: true,
-    onProxyReq: (proxyReq, req, res) => {
-      const bodyData = JSON.stringify(req.body);
-      proxyReq.setHeader("Content-Type", "application/json");
-      proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
-      proxyReq.write(bodyData);
-    },
-    onProxyRes(proxyRes, req, res) {
-      res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
-      proxyRes.pipe(res);
-    },
-  })
-);
+  async (req, res) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify(req.body),
+      redirect: 'follow'
+    };
+    res.set('Content-Type', 'text/event-stream');
+    fetch(openAiUrl, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        res.write(result);
+      })
+      .catch(error => console.log('error', error));
+  }
+)
+// route.post(
+//   "/gpt",
+//   createProxyMiddleware({
+//     target: openAiUrl,
+//     changeOrigin: true,
+//     pathRewrite,
+//     selfHandleResponse: true,
+//     onProxyReq: (proxyReq, req, res) => {
+//       const bodyData = JSON.stringify(req.body);
+//       proxyReq.setHeader("Content-Type", "application/json");
+//       proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
+//       proxyReq.write(bodyData);
+      
+//     },
+//     onProxyRes(proxyRes, req, res) {
+//       res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+//       proxyRes.pipe(res);
+//     },
+//   })
+// );
 
 /* 早报 */
 route.get("/morningPaper", async (req, res) => {

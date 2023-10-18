@@ -129,10 +129,10 @@ export const guessit = async ({
         const i = randomInteger(0, data.answer.length - 1);
         isPrompt &&
           await message.say(
-            `⏳还剩 30 秒！\n提示：${data.answer
+            `⏳还剩 30 秒！\n提示：${data.answer.length > 1 ? data.answer
               .split("")
               .map((str, index) => (i === index ? str : "◼"))
-              .join("")}`
+              .join("") : ''}`
           );
         timer2 = setTimeout(async () => {
           delete temp.answer
