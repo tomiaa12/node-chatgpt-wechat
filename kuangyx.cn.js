@@ -66,6 +66,7 @@ query :query \n
 route.post(
   "/gpt",
   async (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     
@@ -75,12 +76,9 @@ route.post(
       body: JSON.stringify(req.body),
       redirect: 'follow'
     };
-    res.set('Content-Type', 'text/event-stream');
     fetch(openAiUrl, requestOptions)
       .then(response => response.text())
-      .then(result => {
-        res.write(result);
-      })
+      .then(res.write)
       .catch(error => console.log('error', error));
   }
 )
