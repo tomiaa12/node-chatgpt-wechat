@@ -47,6 +47,7 @@ const queryErrMsg = "出错了，再问我一次吧";
 
 // 自动回复的群名，true 表示所有群都回复
 const replyRoomTopic = [
+  "开发交流群",
   "前公司吃瓜唠嗑群",
   "前后端技术交流群",
   "回宁远种田",
@@ -284,7 +285,7 @@ const getMsg = async (msg, id, message) => {
     },
     async 翻译() {
       text = "";
-      const query = msg.replace(/^画图/, "");
+      const query = msg.replace(/^翻译/, "");
       const { data } = await translate(query);
       text = data;
     },

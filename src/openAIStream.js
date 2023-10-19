@@ -34,7 +34,7 @@ export const OpenAIStream = async (openAiUrl, msg, apiKey, model) => {
               controller.close();
               return;
             }
-            const text = json.choices[0].delta.content || '';
+            const text = json.choices[0]?.delta?.content || '';
             const queue = encoder.encode(text);
             controller.enqueue(text);
             // controller.enqueue(queue);

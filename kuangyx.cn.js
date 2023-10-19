@@ -78,7 +78,9 @@ route.post(
     };
     fetch(openAiUrl, requestOptions)
       .then(response => response.text())
-      .then(res.write)
+      .then((response) => {
+        res.write(response)
+      })
       .catch(error => console.log('error', error));
   }
 )
