@@ -20,38 +20,46 @@ import twoDimension from "./src/twoDimension.js";
 import movie from "./src/movie.js";
 import lol from "../lol-voice-skin/data.json" assert { type: "json" };
 import { resolve } from "path";
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
 
 const port = 3000;
 
 const app = express();
 const route = express.Router();
 
-const pathRewrite = (path, req) => path.replace(req.path, "");
+// const pathRewrite = (path, req) => path.replace(req.path, "");
 
 route.use(express.json());
 
 app.use(async (req, res, next) => {
-  const referer = req.get('Referer') || '';
-  if (referer.includes('/pages/chatGPT.html')) {
-    res.header("Access-Control-Allow-Origin", req.headers.origin);
+  const referer = req.get("Referer") || "";
+  // if (referer.includes('/pages/chatGPT.html') || decodeURIComponent(referer).includes('/docs/在线应用')) {
 
-    res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
-    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-    res.header("Content-Type", "application/json;charset=utf-8");
-    next();
-  } else {
-    res.send("你在淦神魔");
-  }
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+
+  res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  res.header("Content-Type", "application/json;charset=utf-8");
+  next();
+  // } else {
+  //   res.send("你在淦神魔");
+  // }
 });
 
 morgan.token("body", (req) => JSON.stringify(req.body));
 morgan.token("query", (req) => JSON.stringify(req.query));
-morgan.token("now", () => dayjs().format('YYYY-MM-DD HH:mm:ss'));
-morgan.token('remote-addr', (req) => req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress);
+morgan.token("now", () => dayjs().format("YYYY-MM-DD HH:mm:ss"));
+morgan.token(
+  "remote-addr",
+  (req) =>
+    req.headers["x-real-ip"] ||
+    req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress
+);
 
 app.use(
-  morgan(`
+  morgan(
+    `
 ------------------------ :now start -------------------------------\n 
 :url IP[:remote-addr] :method  :status \n
 body :body \n
@@ -59,31 +67,31 @@ query :query \n
 耗时[:response-time ms] 来源[:referrer] \n
 设备[:user-agent]
 ----------------------------  end  -------------------------------\n 
-  `)
+  `,
+    { skip: (req) => req.method === "OPTIONS" }
+  )
 );
 
 /* gpt 代理 */
-route.post(
-  "/gpt",
-  async (req, res) => {
-    res.setHeader('Content-Type', 'text/event-stream');
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    
-    const requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: JSON.stringify(req.body),
-      redirect: 'follow'
-    };
-    fetch(openAiUrl, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        res.write(response)
-      })
-      .catch(error => console.log('error', error));
-  }
-)
+route.post("/gpt", async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: JSON.stringify(req.body),
+    redirect: "follow",
+  };
+  fetch(openAiUrl, requestOptions)
+    .then((response) => response.text())
+    .then((response) => {
+      res.write(response);
+      if (response.includes(`"finish_reason": "stop"`)) res.end();
+    })
+    .catch((error) => console.log("error", error));
+});
 // route.post(
 //   "/gpt",
 //   createProxyMiddleware({
@@ -96,7 +104,7 @@ route.post(
 //       proxyReq.setHeader("Content-Type", "application/json");
 //       proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
 //       proxyReq.write(bodyData);
-      
+
 //     },
 //     onProxyRes(proxyRes, req, res) {
 //       res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
@@ -167,6 +175,8 @@ app.use("/movie", express.static(resolve("../movie")));
 app.use("/twoDimension", express.static(resolve("../twoDimension")));
 
 /* 获取猜一猜列表 */
+const randomInteger = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
 route.post("/getGuessit", async (req, res) => {
   const data = {
     ultraman,
@@ -175,8 +185,10 @@ route.post("/getGuessit", async (req, res) => {
     movie,
     twoDimension,
   };
+  const temp = data[req.body.type];
+  if (!temp) return res.send(null);
 
-  res.send(data[req.body.type] || []);
+  res.send(temp[randomInteger(0, temp.length - 1)]);
 });
 
 app.use("/api", route);

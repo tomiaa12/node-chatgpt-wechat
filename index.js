@@ -8,7 +8,7 @@ import { guessit, runing } from "./src/guessit.js";
 import twoDimension from "./src/twoDimension.js";
 import { FileBox } from "file-box";
 import lol from "../lol-voice-skin/data.json" assert { type: "json" };
-import { musicList, getFileBox, init } from './src/cloudMusic.js'
+import { musicList, getFileBox, init } from "./src/cloudMusic.js";
 import {
   openAiUrl,
   morningPaper,
@@ -37,10 +37,7 @@ const isSendMorningPaper = true;
 // 发送早报的时间
 const sendMorningPaperTime = "0 9 * * *";
 // 要发送早报的群聊
-const sendMorningPaperToptics = [
-  "回宁远种田",
-  "前后端技术交流群",
-];
+const sendMorningPaperToptics = ["回宁远种田", "前后端技术交流群"];
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = "出错了，再问我一次吧";
@@ -54,7 +51,7 @@ const replyRoomTopic = [
   "回宁远种田",
   "马飞测试",
   "又是被摩擦的一天",
-  "智慧眼价值中台前端组"
+  "智慧眼价值中台前端组",
 ];
 // const replyRoomTopic = true
 
@@ -62,7 +59,7 @@ const replyRoomTopic = [
 const ultramanNum = 5;
 
 // 每人每天私聊的次数
-const privateChatNum = 4
+const privateChatNum = 4;
 // 私聊次数限制统计
 const privateChatStatic = {};
 
@@ -109,9 +106,9 @@ const getMsg = async (msg, id, message) => {
 
   const guessitMusic = async () => {
     text = "";
-    if(!isCloudMusicInit) {
-      await init()
-      isCloudMusicInit = true
+    if (!isCloudMusicInit) {
+      await init();
+      isCloudMusicInit = true;
     }
     await guessit({
       name: "听音猜歌名",
@@ -124,7 +121,7 @@ const getMsg = async (msg, id, message) => {
       getFileBox,
       formatAnswer: ({ answer, singer }) => `《${answer}》 -- ${singer}`,
     });
-  }
+  };
   const switchFun = {
     async 网易云热评() {
       const data = await cloudmusicComment();
@@ -209,6 +206,9 @@ const getMsg = async (msg, id, message) => {
         isPrompt: false,
       });
     },
+    async 功能() {
+      text = Functions.join("\n");
+    },
     async default() {
       let messages = msgContext[id] || [];
       if (maxMsgLength) {
@@ -274,7 +274,7 @@ const getMsg = async (msg, id, message) => {
       const query = msg.replace(/^画图/, "");
       const url = await draw(query);
       const imageFileBox = FileBox.fromUrl(url);
-      await message.say(imageFileBox)
+      await message.say(imageFileBox);
     },
     async 猜() {
       const temp = Object.keys(switchFun);
