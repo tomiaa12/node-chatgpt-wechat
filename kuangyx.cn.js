@@ -33,7 +33,7 @@ route.use(express.json());
 
 app.use(async (req, res, next) => {
   const referer = req.get("Referer") || "";
-  // if (referer.includes('/pages/chatGPT.html') || decodeURIComponent(referer).includes('/docs/在线应用')) {
+  if (referer.includes('/pages/chatGPT.html') || decodeURIComponent(referer).includes('/docs/在线应用')) {
 
   res.header("Access-Control-Allow-Origin", req.headers.origin);
 
@@ -41,9 +41,9 @@ app.use(async (req, res, next) => {
   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
   res.header("Content-Type", "application/json;charset=utf-8");
   next();
-  // } else {
-  //   res.send("你在淦神魔");
-  // }
+  } else {
+    res.send("你在淦神魔");
+  }
 });
 
 morgan.token("body", (req) => JSON.stringify(req.body));
