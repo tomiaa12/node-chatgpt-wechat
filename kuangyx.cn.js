@@ -19,6 +19,8 @@ import jsQuestion from "./src/jsQuestion.js";
 import twoDimension from "./src/twoDimension.js";
 import movie from "./src/movie.js";
 import lol from "../lol-voice-skin/data.json" assert { type: "json" };
+import { musicList, getFileBox, init } from "./src/cloudMusic.js";
+
 import { resolve } from "path";
 import dayjs from "dayjs";
 
@@ -33,14 +35,16 @@ route.use(express.json());
 
 app.use(async (req, res, next) => {
   const referer = req.get("Referer") || "";
-  if (referer.includes('/pages/chatGPT.html') || decodeURIComponent(referer).includes('/docs/在线应用')) {
+  if (
+    referer.includes("/pages/chatGPT.html") ||
+    decodeURIComponent(referer).includes("/docs/在线应用")
+  ) {
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
 
-  res.header("Access-Control-Allow-Origin", req.headers.origin);
-
-  res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
-  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-  res.header("Content-Type", "application/json;charset=utf-8");
-  next();
+    res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header("Content-Type", "application/json;charset=utf-8");
+    next();
   } else {
     res.send("你在淦神魔");
   }
@@ -174,6 +178,8 @@ app.use("/lol-voice-skin", express.static(resolve("../lol-voice-skin")));
 app.use("/movie", express.static(resolve("../movie")));
 app.use("/twoDimension", express.static(resolve("../twoDimension")));
 
+await init();
+
 /* 获取猜一猜列表 */
 const randomInteger = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -184,11 +190,20 @@ route.post("/getGuessit", async (req, res) => {
     lol,
     movie,
     twoDimension,
+    music: musicList,
   };
   const temp = data[req.body.type];
+
   if (!temp) return res.send(null);
 
-  res.send(temp[randomInteger(0, temp.length - 1)]);
+  const resData = temp[randomInteger(0, temp.length - 1)]
+
+  if (req.body.type === "music") {
+    const fileBox = await getFileBox(resData);
+    resData.audioBase64 = await fileBox.toBase64()
+  }
+
+  res.send(resData);
 });
 
 app.use("/api", route);
