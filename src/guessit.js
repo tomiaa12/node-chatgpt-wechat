@@ -25,6 +25,7 @@ export const guessit = async ({
   isPrompt = true, // 开启提示
   getFileBox, // 获取文件
   formatAnswer, // 答案公布格式化
+  link, // 在线游玩
 }) => {
   // 是否运行中
   if (runing[id]) return;
@@ -66,6 +67,9 @@ export const guessit = async ({
               : `游戏结束，猜对${temp.answerPersons[0].n}个`
           );
         }
+        if(link)
+        await message.say(`在线游玩${link}`);
+
         delete context[id];
         delete runing[id];
         wechaty.off("message", onMessage);
