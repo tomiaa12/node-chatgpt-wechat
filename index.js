@@ -44,14 +44,9 @@ const queryErrMsg = "出错了，再问我一次吧";
 
 // 自动回复的群名，true 表示所有群都回复
 const replyRoomTopic = [
-  "前小铁前端搬运工",
   "开发交流群",
-  "前公司吃瓜唠嗑群",
-  "前后端技术交流群",
   "回宁远种田",
   "马飞测试",
-  "又是被摩擦的一天",
-  "智慧眼价值中台前端组",
 ];
 // const replyRoomTopic = true
 
