@@ -329,6 +329,12 @@ wechaty
     });
   })
   .on("message", async (message) => {
+    const sendQr = async () => {
+      const imageFileBox = FileBox.fromUrl('https://kuangyx.cn/img/wxq1.png');
+      await message.say(imageFileBox);
+      await room.say(`@${contact.name()} 进群回复`);
+    }
+
     // 如果是群聊消息
     if (message.room()) {
       const msg = await message.mentionText();
@@ -336,7 +342,10 @@ wechaty
       const isMentioned = await message.mentionSelf();
       const contact = message.talker();
       const topic = await room.topic();
-      if (!(replyRoomTopic === true || replyRoomTopic.includes(topic))) return;
+      if (!(replyRoomTopic === true || replyRoomTopic.includes(topic))) {
+        await sendQr()
+        return
+      }
 
       if (!isMentioned) return;
 
@@ -356,6 +365,8 @@ wechaty
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
     }
+    await sendQr()
+    
     //  else if (message.text()) {
     //   const id = message.talker().id;
     //   privateChatStatic[id] ??= 0;
