@@ -67,8 +67,8 @@ export const guessit = async ({
               : `游戏结束，猜对${temp.answerPersons[0].n}个`
           );
         }
-        if(link)
-        await message.say(`在线游玩${link}`);
+        // if(link)
+        // await message.say(`在线游玩${link}`);
 
         delete context[id];
         delete runing[id];
