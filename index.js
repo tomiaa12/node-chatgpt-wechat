@@ -97,7 +97,7 @@ const getMsg = async (msg, id, message) => {
       id,
       message,
       wechaty,
-      link: 'https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E7%8C%9C%E8%8B%B1%E9%9B%84%E8%81%94%E7%9B%9F.html'
+      link: "https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E7%8C%9C%E8%8B%B1%E9%9B%84%E8%81%94%E7%9B%9F.html",
     });
   };
 
@@ -117,7 +117,7 @@ const getMsg = async (msg, id, message) => {
       caseSensitive: false,
       getFileBox,
       formatAnswer: ({ answer, singer }) => `《${answer}》 -- ${singer}`,
-      link: 'https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E7%8C%9C%E9%9F%B3%E4%B9%90.html'
+      link: "https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E7%8C%9C%E9%9F%B3%E4%B9%90.html",
     });
   };
   const switchFun = {
@@ -159,7 +159,7 @@ const getMsg = async (msg, id, message) => {
         id,
         message,
         wechaty,
-        link: 'https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E7%8C%9C%E5%A5%A5%E7%89%B9%E6%9B%BC.html'
+        link: "https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E7%8C%9C%E5%A5%A5%E7%89%B9%E6%9B%BC.html",
       });
     },
     猜英雄联盟: guessitLOL,
@@ -177,7 +177,7 @@ const getMsg = async (msg, id, message) => {
         id,
         message,
         wechaty,
-        link: 'https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E7%8C%9C%E7%94%B5%E5%BD%B1.html'
+        link: "https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E7%8C%9C%E7%94%B5%E5%BD%B1.html",
       });
     },
     async 二次元浓度测试() {
@@ -191,7 +191,7 @@ const getMsg = async (msg, id, message) => {
         wechaty,
         isPrompt: false,
         caseSensitive: false,
-        link: 'https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E4%BA%8C%E6%AC%A1%E5%85%83%E6%B5%93%E5%BA%A6%E6%B5%8B%E8%AF%95.html'
+        link: "https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/%E4%BA%8C%E6%AC%A1%E5%85%83%E6%B5%93%E5%BA%A6%E6%B5%8B%E8%AF%95.html",
       });
     },
     async 入群测验() {
@@ -205,7 +205,7 @@ const getMsg = async (msg, id, message) => {
         wechaty,
         caseSensitive: false,
         isPrompt: false,
-        link: 'https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/js%E9%97%AE%E9%A2%98%E6%B5%8B%E9%AA%8C.html'
+        link: "https://kuangyx.cn/docs/%E5%9C%A8%E7%BA%BF%E5%BA%94%E7%94%A8/%E5%B0%8F%E6%B8%B8%E6%88%8F/js%E9%97%AE%E9%A2%98%E6%B5%8B%E9%AA%8C.html",
       });
     },
     async 功能() {
@@ -331,10 +331,10 @@ wechaty
   })
   .on("message", async (message) => {
     const sendQr = async () => {
-      const imageFileBox = FileBox.fromUrl('https://kuangyx.cn/img/wxq1.png');
+      const imageFileBox = FileBox.fromUrl("https://kuangyx.cn/img/wxq1.png");
       await message.say(imageFileBox);
       await room.say(`@${contact.name()} 进群回复`);
-    }
+    };
 
     // 如果是群聊消息
     if (message.room()) {
@@ -344,11 +344,14 @@ wechaty
       const contact = message.talker();
       const topic = await room.topic();
       if (!(replyRoomTopic === true || replyRoomTopic.includes(topic))) {
-        await sendQr()
-        return
+        return;
+      }else if(isMentioned) {
+        await sendQr();
       }
 
-      if (!isMentioned) return;
+      if (!isMentioned) {
+        return;
+      }
 
       try {
         const id = room.id;
@@ -366,8 +369,8 @@ wechaty
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
     }
-    await sendQr()
-    
+    await sendQr();
+
     //  else if (message.text()) {
     //   const id = message.talker().id;
     //   privateChatStatic[id] ??= 0;
