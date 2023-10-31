@@ -333,7 +333,12 @@ wechaty
     const sendQr = async () => {
       const imageFileBox = FileBox.fromUrl("https://kuangyx.cn/img/wxq1.png");
       await message.say(imageFileBox);
-      await message.say(`@${contact.name()} 进群回复`);
+      if (message.room()) {
+        const contact = message.talker();
+        await message.say(`@${contact.name()} 进群回复`);
+      } else if (message.text()) {
+        await message.say(`群内回复`);
+      }
     };
 
     // 如果是群聊消息
@@ -344,7 +349,7 @@ wechaty
       const contact = message.talker();
       const topic = await room.topic();
       if (!(replyRoomTopic === true || replyRoomTopic.includes(topic))) {
-        if(isMentioned) {
+        if (isMentioned) {
           await sendQr();
         }
         return;
@@ -369,7 +374,7 @@ wechaty
         console.log("报错: ", e.message);
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
-    }else if (message.text()){
+    } else if (message.text()) {
       await sendQr();
     }
 
