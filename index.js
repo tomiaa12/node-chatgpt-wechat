@@ -369,8 +369,9 @@ wechaty
         console.log("报错: ", e.message);
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
+    }else if (message.text()){
+      await sendQr();
     }
-    await sendQr();
 
     //  else if (message.text()) {
     //   const id = message.talker().id;
