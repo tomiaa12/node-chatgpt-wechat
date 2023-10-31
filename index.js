@@ -37,7 +37,7 @@ const isSendMorningPaper = true;
 // 发送早报的时间
 const sendMorningPaperTime = "0 9 * * *";
 // 要发送早报的群聊
-const sendMorningPaperToptics = ["回宁远种田", "前后端技术交流群"];
+const sendMorningPaperToptics = ["回宁远种田"];
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = "出错了，再问我一次吧";
@@ -349,9 +349,9 @@ wechaty
       const contact = message.talker();
       const topic = await room.topic();
       if (!(replyRoomTopic === true || replyRoomTopic.includes(topic))) {
-        if (isMentioned) {
-          await sendQr();
-        }
+        // if (isMentioned) {
+        //   await sendQr();
+        // }
         return;
       }
 
@@ -374,9 +374,10 @@ wechaty
         console.log("报错: ", e.message);
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
-    } else if (message.text()) {
-      await sendQr();
-    }
+    } 
+    // else if (message.text()) {
+    //   await sendQr();
+    // }
 
     //  else if (message.text()) {
     //   const id = message.talker().id;
