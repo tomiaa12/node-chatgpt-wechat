@@ -333,7 +333,7 @@ wechaty
     const sendQr = async () => {
       const imageFileBox = FileBox.fromUrl("https://kuangyx.cn/img/wxq1.png");
       await message.say(imageFileBox);
-      await room.say(`@${contact.name()} 进群回复`);
+      await message.say(`@${contact.name()} 进群回复`);
     };
 
     // 如果是群聊消息
