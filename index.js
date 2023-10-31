@@ -375,9 +375,9 @@ wechaty
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
     } 
-    // else if (message.text()) {
-    //   await sendQr();
-    // }
+    else if (message.text()) {
+      await sendQr();
+    }
 
     //  else if (message.text()) {
     //   const id = message.talker().id;
