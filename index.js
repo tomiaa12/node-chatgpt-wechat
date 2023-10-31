@@ -344,9 +344,10 @@ wechaty
       const contact = message.talker();
       const topic = await room.topic();
       if (!(replyRoomTopic === true || replyRoomTopic.includes(topic))) {
+        if(isMentioned) {
+          await sendQr();
+        }
         return;
-      }else if(isMentioned) {
-        await sendQr();
       }
 
       if (!isMentioned) {
