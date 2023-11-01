@@ -37,7 +37,7 @@ const isSendMorningPaper = true;
 // 发送早报的时间
 const sendMorningPaperTime = "0 9 * * *";
 // 要发送早报的群聊
-const sendMorningPaperToptics = ["回宁远种田"];
+const sendMorningPaperToptics = ["回宁远种田", "开发交流群"];
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = "出错了，再问我一次吧";
@@ -374,8 +374,7 @@ wechaty
         console.log("报错: ", e.message);
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
-    } 
-    else if (message.text()) {
+    } else if (message.text()) {
       await sendQr();
     }
 
