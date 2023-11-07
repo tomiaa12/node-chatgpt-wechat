@@ -349,9 +349,9 @@ wechaty
       const contact = message.talker();
       const topic = await room.topic();
       if (!(replyRoomTopic === true || replyRoomTopic.includes(topic))) {
-        // if (isMentioned) {
-        //   await sendQr();
-        // }
+        if (isMentioned) {
+          await sendQr();
+        }
         return;
       }
 
@@ -374,7 +374,11 @@ wechaty
         console.log("报错: ", e.message);
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
-    } else if (message.text()) {
+    } else if (message.text() && message.type() === wechaty.Message.Type.Text) {
+      const contact = message.from()
+      console.log(
+        `[${contact.name()}]: ${message.text()}`
+      );
       await sendQr();
     }
 
