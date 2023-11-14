@@ -313,7 +313,7 @@ wechaty
         txt
       )}`
     );
-    qrcode.generate(qrcode);
+    qrcode.generate(txt);
   })
   .on("login", async (user) => {
     console.log(`账号:${user.name() || ""} 登录成功`);
