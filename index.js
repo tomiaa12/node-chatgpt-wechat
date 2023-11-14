@@ -22,6 +22,8 @@ import {
   draw,
 } from "./src/api/index.js";
 import dayjs from "dayjs";
+import qrcodeTerminal from "qrcode-terminal";
+
 /* ----------------  配置  ---------------- */
 
 // openAI key
@@ -305,13 +307,14 @@ const getMsg = async (msg, id, message) => {
 };
 
 wechaty
-  .on("scan", async (qrcode, status) =>
+  .on("scan", async (qrcode, status) => {
     console.log(
       `二维码${status}: https://wechaty.js.org/qrcode/${encodeURIComponent(
         qrcode
       )}`
-    )
-  )
+    );
+    qrcode.generate(qrcode);
+  })
   .on("login", async (user) => {
     console.log(`账号:${user.name() || ""} 登录成功`);
 
@@ -375,10 +378,8 @@ wechaty
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
     } else if (message.text() && message.type() === wechaty.Message.Type.Text) {
-      const contact = message.from()
-      console.log(
-        `[${contact.name()}]: ${message.text()}`
-      );
+      const contact = message.from();
+      console.log(`[${contact.name()}]: ${message.text()}`);
       await sendQr();
     }
 
