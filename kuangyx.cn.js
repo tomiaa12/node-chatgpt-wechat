@@ -13,6 +13,10 @@ import {
   poison,
   translate,
   draw,
+  rsdjs,
+  ipInfo,
+  steamplusone,
+  history2Day,
 } from "./src/api/index.js";
 import ultraman from "./src/ultraman.js";
 import jsQuestion from "./src/jsQuestion.js";
@@ -53,6 +57,10 @@ app.use(async (req, res, next) => {
 morgan.token("body", (req) => JSON.stringify(req.body));
 morgan.token("query", (req) => JSON.stringify(req.query));
 morgan.token("now", () => dayjs().format("YYYY-MM-DD HH:mm:ss"));
+morgan.token("referrer", (req) => {
+  const referer = req.get("Referer") || "";
+  return decodeURIComponent(referer)
+});
 morgan.token(
   "remote-addr",
   (req) =>
@@ -169,6 +177,30 @@ route.post("/translate", async (req, res) => {
 route.post("/draw", async (req, res) => {
   const data = await draw(req.body.query);
   res.send(data);
+});
+
+/* 人生倒计时 */
+route.get("/rsdjs", async (req, res) => {
+  const data = await rsdjs();
+  res.send(data);
+});
+
+/* 人生倒计时 */
+route.get("/ipInfo", async (req, res) => {
+  const data = await ipInfo(req.query.ip);
+  res.send(data);
+});
+
+/* steam喜加一 */
+route.get("/steamplusone", async (req, res) => {
+  const data = await steamplusone();
+  res.send(data.data);
+});
+
+/* 历史上的今天 */
+route.get("/history2Day", async (req, res) => {
+  const data = await history2Day();
+  res.send(data.data);
 });
 
 /* 静态托管 */

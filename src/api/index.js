@@ -6,11 +6,18 @@ axios.interceptors.response.use((res) => res.data);
 export const openAiUrl =
   "https://www.ai-yuxin.space/fastapi/api/chat";
 
+// export const morningPaper = async (sendErr) => {
+//   const data = await axios.get(
+//     "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
+//   );
+//   if (new Set(data.all_data).size > 1) return data.all_data.join("\n");
+//   else return sendErr ? '出错啦' : "";
+// };
 export const morningPaper = async (sendErr) => {
-  const data = await axios.get(
-    "https://hub.onmicrosoft.cn/public/news?index=0&origin=zhihu"
+  const {data} = await axios.get(
+    "https://api.52vmy.cn/api/wl/60s?type=json"
   );
-  if (new Set(data.all_data).size > 1) return data.all_data.join("\n");
+  if (data.length) return data.map((item,i) => `${i}、${item.content}`).join("\n");
   else return sendErr ? '出错啦' : "";
 };
 
@@ -53,6 +60,7 @@ export const translate = async (query, to_lang) => {
   });
 }
 
+/* 画图 */
 // 画图 token
 let drawToken = "",
   drawUserId = "";
@@ -110,3 +118,14 @@ export const draw = async (query) => {
     return await draw();
   }
 };
+
+/* 人生倒计时 */
+export const rsdjs = async () => await axios.get("https://v.api.aa1.cn/api/rsdjs");
+
+/* 全球IP信息 */
+export const ipInfo = async (ip) => await axios.get("https://api.lucksss.com/api/ip?ip=" + ip);
+
+/* steam喜加一 */
+export const steamplusone = async () => await axios.get("https://api.pearktrue.cn/api/steamplusone/");
+
+export const history2Day = async () => await axios.get("https://v2.api-m.com/api/history");
