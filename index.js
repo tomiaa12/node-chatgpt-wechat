@@ -307,10 +307,10 @@ const getMsg = async (msg, id, message) => {
 };
 
 wechaty
-  .on("scan", async (qrcode, status) => {
+  .on("scan", async (txt, status) => {
     console.log(
       `二维码${status}: https://wechaty.js.org/qrcode/${encodeURIComponent(
-        qrcode
+        txt
       )}`
     );
     qrcode.generate(qrcode);
