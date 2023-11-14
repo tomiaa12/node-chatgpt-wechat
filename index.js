@@ -307,13 +307,13 @@ const getMsg = async (msg, id, message) => {
 };
 
 wechaty
-  .on("scan", async (txt, status) => {
+  .on("scan", async (qrcode, status) => {
     console.log(
       `二维码${status}: https://wechaty.js.org/qrcode/${encodeURIComponent(
-        txt
+        qrcode
       )}`
     );
-    qrcode.generate(txt);
+    qrcodeTerminal.generate(qrcode);
   })
   .on("login", async (user) => {
     console.log(`账号:${user.name() || ""} 登录成功`);
