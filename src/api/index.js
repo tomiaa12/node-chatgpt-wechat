@@ -3,8 +3,7 @@ import axios from "axios";
 axios.interceptors.response.use((res) => res.data);
 
 // const openAiUrl = 'https://api.openai.com/v1/chat/completions'
-export const openAiUrl =
-  "https://www.ai-yuxin.space/fastapi/api/chat";
+export const openAiUrl = "https://www.ai-yuxin.space/fastapi/api/chat";
 
 // export const morningPaper = async (sendErr) => {
 //   const data = await axios.get(
@@ -14,11 +13,10 @@ export const openAiUrl =
 //   else return sendErr ? '出错啦' : "";
 // };
 export const morningPaper = async (sendErr) => {
-  const {data} = await axios.get(
-    "https://api.52vmy.cn/api/wl/60s?type=json"
-  );
-  if (data.length) return data.map((item,i) => `${i}、${item.content}`).join("\n");
-  else return sendErr ? '出错啦' : "";
+  const { data } = await axios.get("https://api.52vmy.cn/api/wl/60s?type=json");
+  if (data.length)
+    return data.map((item, i) => `${i + 1}、${item.content}`).join("\n");
+  else return sendErr ? "出错啦" : "";
 };
 
 export const cloudmusicComment = async () => {
@@ -50,15 +48,15 @@ export const poison = async () => {
 };
 
 export const translate = async (query, to_lang) => {
-  if(!to_lang) {
-    to_lang = /[\u4e00-\u9fa5]/g.test(query) ? 'en' : 'zh'
+  if (!to_lang) {
+    to_lang = /[\u4e00-\u9fa5]/g.test(query) ? "en" : "zh";
   }
   return axios.post("https://www.ai-yuxin.space/fastapi/api/translate", {
     query,
     from_lang: "auto",
     to_lang,
   });
-}
+};
 
 /* 画图 */
 // 画图 token
@@ -78,7 +76,7 @@ export const draw = async (query) => {
         password: "5d86ed1730a40de164175de5c01b85dc",
       }
     );
-    console.log('画图 token 更新 =>',data)
+    console.log("画图 token 更新 =>", data);
     drawToken = data.token;
     drawUserId = data.user_id;
   };
@@ -120,12 +118,21 @@ export const draw = async (query) => {
 };
 
 /* 人生倒计时 */
-export const rsdjs = async () => await axios.get("https://v.api.aa1.cn/api/rsdjs");
+export const rsdjs = async () =>
+  await axios.get("https://v.api.aa1.cn/api/rsdjs");
 
 /* 全球IP信息 */
-export const ipInfo = async (ip) => await axios.get("https://api.lucksss.com/api/ip?ip=" + ip);
+export const ipInfo = async (ip) =>
+  await axios.get("https://api.lucksss.com/api/ip?ip=" + ip);
 
 /* steam喜加一 */
-export const steamplusone = async () => await axios.get("https://api.pearktrue.cn/api/steamplusone/");
+export const steamplusone = async () =>
+  await axios.get("https://api.pearktrue.cn/api/steamplusone/");
 
-export const history2Day = async () => await axios.get("https://v2.api-m.com/api/history");
+export const history2Day = async () =>
+  await axios.get("https://v2.api-m.com/api/history");
+
+export const lovely = async () =>
+  await axios.get("https://api.lucksss.com/api/dmbz?type=pc", {
+    responseType: "arraybuffer",
+  });

@@ -2,22 +2,7 @@ import express from "express";
 import "express-async-errors";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import morgan from "morgan";
-import {
-  openAiUrl,
-  morningPaper,
-  cloudmusicComment,
-  sentence,
-  rainbow,
-  tiangou,
-  hitokoto,
-  poison,
-  translate,
-  draw,
-  rsdjs,
-  ipInfo,
-  steamplusone,
-  history2Day,
-} from "./src/api/index.js";
+import * as api from "./src/api/index.js";
 import ultraman from "./src/ultraman.js";
 import jsQuestion from "./src/jsQuestion.js";
 import twoDimension from "./src/twoDimension.js";
@@ -54,8 +39,8 @@ app.use(async (req, res, next) => {
   }
 });
 
-morgan.token("body", (req) => JSON.stringify(req.body));
-morgan.token("query", (req) => JSON.stringify(req.query));
+morgan.token("body", (req) => Object.keys(req.body).length ? `body ${JSON.stringify(req.body)} \n` : '');
+morgan.token("query", (req) => Object.keys(req.query).length ?  `query ${JSON.stringify(req.query)} \n` : '');
 morgan.token("now", () => dayjs().format("YYYY-MM-DD HH:mm:ss"));
 morgan.token("referrer", (req) => {
   const referer = req.get("Referer") || "";
@@ -73,9 +58,7 @@ app.use(
   morgan(
     `
 ------------------------ :now start -------------------------------\n 
-:url IP[:remote-addr] :method  :status \n
-body :body \n
-query :query \n
+:url IP[:remote-addr] :method  :status \n :body :query
 耗时[:response-time ms] 来源[:referrer] \n
 设备[:user-agent]
 ----------------------------  end  -------------------------------\n 
@@ -96,7 +79,7 @@ route.post("/gpt", async (req, res) => {
     body: JSON.stringify(req.body),
     redirect: "follow",
   };
-  fetch(openAiUrl, requestOptions)
+  fetch(api.openAiUrl, requestOptions)
     .then((response) => response.text())
     .then((response) => {
       res.write(response);
@@ -127,80 +110,87 @@ route.post("/gpt", async (req, res) => {
 
 /* 早报 */
 route.get("/morningPaper", async (req, res) => {
-  const data = await morningPaper();
+  const data = await api.morningPaper();
   res.send(data);
 });
 
 /* 网易云热评 */
 route.get("/cloudmusicComment", async (req, res) => {
-  const data = await cloudmusicComment();
+  const data = await api.cloudmusicComment();
   res.send(data);
 });
 
 /* 一句 */
 route.get("/sentence", async (req, res) => {
-  const data = await sentence();
+  const data = await api.sentence();
   res.send(data);
 });
 
 /* 彩虹屁 */
 route.get("/rainbow", async (req, res) => {
-  const data = await rainbow();
+  const data = await api.rainbow();
   res.send(data);
 });
 
 /* 舔狗日记 */
 route.get("/tiangou", async (req, res) => {
-  const data = await tiangou();
+  const data = await api.tiangou();
   res.send(data);
 });
 
 /* 毒鸡汤 */
 route.get("/poison", async (req, res) => {
-  const data = await poison();
+  const data = await api.poison();
   res.send(data);
 });
 
 /* 一言 */
 route.get("/hitokoto", async (req, res) => {
-  const data = await hitokoto();
+  const data = await api.hitokoto();
   res.send(data);
 });
 
 /* 翻译 */
 route.post("/translate", async (req, res) => {
-  const data = await translate(req.body.query, req.body.to_lang);
+  const data = await api.translate(req.body.query, req.body.to_lang);
   res.send(data);
 });
 
 /* 画图 */
 route.post("/draw", async (req, res) => {
-  const data = await draw(req.body.query);
+  const data = await api.draw(req.body.query);
   res.send(data);
 });
 
 /* 人生倒计时 */
 route.get("/rsdjs", async (req, res) => {
-  const data = await rsdjs();
+  const data = await api.rsdjs();
   res.send(data);
 });
 
 /* 人生倒计时 */
 route.get("/ipInfo", async (req, res) => {
-  const data = await ipInfo(req.query.ip);
+  const data = await api.ipInfo(req.query.ip);
   res.send(data);
 });
 
 /* steam喜加一 */
 route.get("/steamplusone", async (req, res) => {
-  const data = await steamplusone();
+  const data = await api.steamplusone();
   res.send(data.data);
 });
 
 /* 历史上的今天 */
 route.get("/history2Day", async (req, res) => {
-  const data = await history2Day();
+  const data = await api.history2Day();
   res.send(data.data);
+});
+
+/* 动漫里那些可爱女主 */
+route.get("/lovely", async (req, res) => {
+  const data = await api.lovely();
+  res.set('Content-Type', 'image/png'); 
+  res.send(data);
 });
 
 /* 静态托管 */
