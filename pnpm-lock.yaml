@@ -1,7 +1,7 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
-  autoInstallPeers: true
+  autoInstallPeers: false
   excludeLinksFromLockfile: false
 
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
     version: 4.12.2
   axios:
     specifier: ^1.3.5
-    version: 1.3.5(debug@2.6.9)
+    version: 1.3.5
   dayjs:
     specifier: ^1.11.9
     version: 1.11.9
@@ -35,12 +35,15 @@ dependencies:
   node-schedule:
     specifier: ^2.1.1
     version: 2.1.1
+  qrcode-terminal:
+    specifier: ^0.12.0
+    version: 0.12.0
   sharp:
     specifier: ^0.32.5
     version: 0.32.5
   wechaty:
     specifier: ^1.20.2
-    version: 1.20.2(brolog@1.14.2)(redux@4.2.1)(rxjs@7.8.0)
+    version: 1.20.2
 
 devDependencies:
   express:
@@ -539,7 +542,7 @@ packages:
     engines: {node: '>=12'}
     hasBin: true
     dependencies:
-      axios: 1.3.5(debug@2.6.9)
+      axios: 1.3.5
       express: 4.18.2
       express-fileupload: 1.4.0
       md5: 2.3.0
@@ -649,6 +652,16 @@ packages:
 
   /aws4@1.12.0:
     resolution: {integrity: sha512-NmWvPnx0F1SfrQbYwOi7OeaNGokp9XhzNioJ/CSBs8Qa4vxug81mhJEAVZwxXuBmYB5KDRfMq/F3RR0BIU7sWg==}
+    dev: false
+
+  /axios@1.3.5:
+    resolution: {integrity: sha512-glL/PvG/E+xCWwV8S6nCHcrfg1exGx7vxyUIivIA1iL7BIh6bePylCfVHwp6k13ao7SATxB6imau2kqY+I67kw==}
+    dependencies:
+      follow-redirects: 1.15.2
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
     dev: false
 
   /axios@1.3.5(debug@2.6.9):
@@ -1137,6 +1150,16 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
+  /ducks@1.0.2(redux-observable@2.0.0):
+    resolution: {integrity: sha512-CDLrkP4g5E3IG0kAPrlVgavrgtNwn528DsXFZq3dSOx+DaS5nnoH9eEOXJ1emXtPVwiVF50pOYvWGF42miaJgg==}
+    engines: {node: '>=16', npm: '>=7'}
+    peerDependencies:
+      redux: ^4.0.5
+      redux-observable: ^2.0.0
+    dependencies:
+      redux-observable: 2.0.0
+    dev: false
+
   /ducks@1.0.2(redux-observable@2.0.0)(redux@4.2.1):
     resolution: {integrity: sha512-CDLrkP4g5E3IG0kAPrlVgavrgtNwn528DsXFZq3dSOx+DaS5nnoH9eEOXJ1emXtPVwiVF50pOYvWGF42miaJgg==}
     engines: {node: '>=16', npm: '>=7'}
@@ -1413,6 +1436,16 @@ packages:
       state-switch: 0.14.1
     dev: false
 
+  /follow-redirects@1.15.2:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
+
   /follow-redirects@1.15.2(debug@2.6.9):
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
     engines: {node: '>=4.0'}
@@ -1653,7 +1686,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.2(debug@2.6.9)
+      follow-redirects: 1.15.2
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -2473,6 +2506,11 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
+  /qrcode-terminal@0.12.0:
+    resolution: {integrity: sha512-EXtzRZmC+YGmGlDFbXKxQiMZNwCLEO6BANKXG4iCtSIM0yqc/pappSx3RIKr4r0uh5JsBckOXeKrB3Iz7mdQpQ==}
+    hasBin: true
+    dev: false
+
   /qrcode@1.5.1:
     resolution: {integrity: sha512-nS8NJ1Z3md8uTjKtP+SGGhfqmTCs5flU/xR623oI0JX+Wepz9R8UrRVCTBTJm3qGw3rH6jJ6MUHjkDx15cxSSg==}
     engines: {node: '>=10.13.0'}
@@ -2552,6 +2590,15 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       readable-stream: 3.6.2
+    dev: false
+
+  /redux-observable@2.0.0:
+    resolution: {integrity: sha512-FJz4rLXX+VmDDwZS/LpvQsKnSanDOe8UVjiLryx1g3seZiS69iLpMrcvXD5oFO7rtkPyRdo/FmTqldnT3X3m+w==}
+    peerDependencies:
+      redux: '>=4 <5'
+    dependencies:
+      rxjs: 7.8.0
+      tslib: 2.1.0
     dev: false
 
   /redux-observable@2.0.0(redux@4.2.1):
@@ -2819,7 +2866,7 @@ packages:
       nop: 1.0.0
     dev: false
 
-  /state-switch@1.6.3(brolog@1.14.2)(gerror@1.0.16)(rxjs@7.8.0):
+  /state-switch@1.6.3(gerror@1.0.16):
     resolution: {integrity: sha512-D1SwjaDbR5FAivty3SlpU/rD5B9PtnfDkR+BKLkYYxJRUmFqGSD96iwi6t8rIby9vBJJH9CTZyZO/aYzGBzMPw==}
     engines: {node: '>=16', npm: '>=7'}
     peerDependencies:
@@ -2828,13 +2875,25 @@ packages:
       rxjs: ^7.4.0
     dependencies:
       '@pipeletteio/nop': 1.0.5
-      brolog: 1.14.2
+      gerror: 1.0.16
+      xstate: 4.37.1
+    dev: false
+
+  /state-switch@1.6.3(gerror@1.0.16)(rxjs@7.8.0):
+    resolution: {integrity: sha512-D1SwjaDbR5FAivty3SlpU/rD5B9PtnfDkR+BKLkYYxJRUmFqGSD96iwi6t8rIby9vBJJH9CTZyZO/aYzGBzMPw==}
+    engines: {node: '>=16', npm: '>=7'}
+    peerDependencies:
+      brolog: ^1.14.2
+      gerror: ^1.0.16
+      rxjs: ^7.4.0
+    dependencies:
+      '@pipeletteio/nop': 1.0.5
       gerror: 1.0.16
       rxjs: 7.8.0
       xstate: 4.37.1
     dev: false
 
-  /state-switch@1.7.1(brolog@1.14.2)(gerror@1.0.16)(rxjs@7.8.0):
+  /state-switch@1.7.1(brolog@1.14.2)(gerror@1.0.16):
     resolution: {integrity: sha512-P8G42lE6JW8l9wbYSxRfB81qTGJw+z4fXN9jSRpOy5i09oonoFcOZGGObvYyiMz7pxatTzbWzhHi+ioKzflm2g==}
     engines: {node: '>=16', npm: '>=7'}
     peerDependencies:
@@ -2845,7 +2904,6 @@ packages:
       '@pipeletteio/nop': 1.0.5
       brolog: 1.14.2
       gerror: 1.0.16
-      rxjs: 7.8.0
       xstate: 4.37.1
     dev: false
 
@@ -3120,25 +3178,25 @@ packages:
       stronger-typed-streams: 0.2.0
     dev: false
 
-  /wechaty-puppet-service@1.19.9(brolog@1.14.2)(redux@4.2.1)(wechaty-puppet@1.20.2)(wechaty@1.20.2):
+  /wechaty-puppet-service@1.19.9(wechaty-puppet@1.20.2)(wechaty@1.20.2):
     resolution: {integrity: sha512-nmJmG67hhM0M2gzr+yXDw8HIGn0BBB1p8b9+Fw7D0ENP7olMRuBPW7ST+Qs0WXJjd4X2+uoAsdCErs3L5d5JzA==}
     engines: {node: '>=16', npm: '>=7'}
     peerDependencies:
       wechaty-puppet: ^1.19.1
     dependencies:
       clone-class: 1.1.3
-      ducks: 1.0.2(redux-observable@2.0.0)(redux@4.2.1)
+      ducks: 1.0.2(redux-observable@2.0.0)
       file-box: 1.5.5
       flash-store: 1.3.5
       gerror: 1.0.16
-      redux-observable: 2.0.0(redux@4.2.1)
+      redux-observable: 2.0.0
       rxjs: 7.8.0
       semver: 7.5.4
       stronger-typed-streams: 0.2.0
       uuid: 8.3.2
       wechaty-grpc: 1.5.2
-      wechaty-puppet: 1.20.2(rxjs@7.8.0)
-      wechaty-redux: 1.20.2(brolog@1.14.2)(wechaty-puppet@1.20.2)(wechaty@1.20.2)
+      wechaty-puppet: 1.20.2
+      wechaty-redux: 1.20.2(wechaty-puppet@1.20.2)(wechaty@1.20.2)
       wechaty-token: 1.1.2
     transitivePeerDependencies:
       - brolog
@@ -3157,13 +3215,13 @@ packages:
       fast-xml-parser: 3.21.1
       promise-retry: 2.0.1
       wechat4u: 0.7.11
-      wechaty-puppet: 1.20.2(rxjs@7.8.0)
+      wechaty-puppet: 1.20.2
       xml2js: 0.4.23
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /wechaty-puppet@1.20.2(rxjs@7.8.0):
+  /wechaty-puppet@1.20.2:
     resolution: {integrity: sha512-IXcnUc9A3hGIT+9CEF8KLkbdld+AQPfVlWLeUXmmSvm3I9NbSbVfU43FZvKMjvLCexvN5DZq2+JZdASESohI5Q==}
     engines: {node: '>=16', npm: '>=7'}
     dependencies:
@@ -3174,7 +3232,7 @@ packages:
       fp-ts: 2.13.1
       gerror: 1.0.16
       memory-card: 1.1.2
-      state-switch: 1.7.1(brolog@1.14.2)(gerror@1.0.16)(rxjs@7.8.0)
+      state-switch: 1.7.1(brolog@1.14.2)(gerror@1.0.16)
       typed-emitter: 1.5.0-from-event
       typesafe-actions: 5.1.0
       uuid: 8.3.2
@@ -3183,7 +3241,7 @@ packages:
       - rxjs
     dev: false
 
-  /wechaty-redux@1.20.2(brolog@1.14.2)(wechaty-puppet@1.20.2)(wechaty@1.20.2):
+  /wechaty-redux@1.20.2(wechaty-puppet@1.20.2)(wechaty@1.20.2):
     resolution: {integrity: sha512-XAhSmdCDa1yaAMRYPiYqbX3BL0T1Owyf+77HxLY+450AFAyjM4xak5ZLStLWIA3zEktgzn6KwEthtu7mmZ7n3g==}
     engines: {node: '>=16', npm: '>=7'}
     peerDependencies:
@@ -3195,13 +3253,13 @@ packages:
       redux: 4.2.1
       redux-observable: 2.0.0(redux@4.2.1)
       rxjs: 7.8.0
-      state-switch: 1.6.3(brolog@1.14.2)(gerror@1.0.16)(rxjs@7.8.0)
+      state-switch: 1.6.3(gerror@1.0.16)(rxjs@7.8.0)
       typed-emitter: 1.5.0-from-event
       typesafe-actions: 5.1.0
       utility-types: 3.10.0
       uuid: 8.3.2
-      wechaty: 1.20.2(brolog@1.14.2)(redux@4.2.1)(rxjs@7.8.0)
-      wechaty-puppet: 1.20.2(rxjs@7.8.0)
+      wechaty: 1.20.2
+      wechaty-puppet: 1.20.2
     transitivePeerDependencies:
       - brolog
     dev: false
@@ -3219,7 +3277,7 @@ packages:
       - supports-color
     dev: false
 
-  /wechaty@1.20.2(brolog@1.14.2)(redux@4.2.1)(rxjs@7.8.0):
+  /wechaty@1.20.2:
     resolution: {integrity: sha512-bIZ8m2lOya4SKnxVunbMGemE8JyZdnXhnLnfXtBAZV997ef6uqP4pJxuwiJnV0qbXGyIE+F3B2b8yjQOZh43lQ==}
     engines: {node: '>=16', npm: '>=7'}
     hasBin: true
@@ -3237,10 +3295,10 @@ packages:
       memory-card: 1.1.2
       open-graph: 0.2.6
       rx-queue: 1.0.5
-      state-switch: 1.6.3(brolog@1.14.2)(gerror@1.0.16)(rxjs@7.8.0)
+      state-switch: 1.6.3(gerror@1.0.16)
       uuid: 8.3.2
-      wechaty-puppet: 1.20.2(rxjs@7.8.0)
-      wechaty-puppet-service: 1.19.9(brolog@1.14.2)(redux@4.2.1)(wechaty-puppet@1.20.2)(wechaty@1.20.2)
+      wechaty-puppet: 1.20.2
+      wechaty-puppet-service: 1.19.9(wechaty-puppet@1.20.2)(wechaty@1.20.2)
       wechaty-puppet-wechat4u: 1.13.15(wechaty-puppet@1.20.2)
       wechaty-token: 1.1.2
       ws: 8.13.0
