@@ -3,7 +3,7 @@ import axios from "axios";
 axios.interceptors.response.use((res) => res.data);
 
 // const openAiUrl = 'https://api.openai.com/v1/chat/completions'
-export const openAiUrl = "https://www.ai-yuxin.space/fastapi/api/chat";
+export const openAiUrl = "https://www.yuxin-ai.com/fastapi/api/chat";
 
 // export const morningPaper = async (sendErr) => {
 //   const data = await axios.get(
