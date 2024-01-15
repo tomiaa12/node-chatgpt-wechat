@@ -15,7 +15,7 @@ export const openAiUrl = "https://www.ai-yuxin.space/fastapi/api/chat";
 export const morningPaper = async (sendErr) => {
   const { data } = await axios.get("https://api.52vmy.cn/api/wl/60s?type=json");
   if (data.length)
-    return data.map((item, i) => `${i + 1}、${item.content}`).join("\n");
+    return data.map((item, i) => `${i + 1}、${item}`).join("\n");
   else return sendErr ? "出错啦" : "";
 };
 
