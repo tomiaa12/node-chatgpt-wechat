@@ -29,9 +29,10 @@ export const OpenAIStream = async (openAiUrl, messages, apiKey, model) => {
       messages,
     }),
   });
-  if (res.status !== 200) {
-    throw new Error("OpenAI API returned an error");
-  }
+  console.log(res.body,'res.body')
+  // if (res.status !== 200) {
+  //   throw new Error("OpenAI API returned an error");
+  // }
 
   return new ReadableStream({
     async start(controller) {
