@@ -23,7 +23,7 @@ import {
 } from "./src/api/index.js";
 import dayjs from "dayjs";
 import qrcodeTerminal from "qrcode-terminal";
-
+import axios from "axios"
 /* ----------------  配置  ---------------- */
 
 // openAI key
@@ -230,44 +230,44 @@ const getMsg = async (msg, id, message) => {
       ];
 
       /* 全量 */
-      // const data = await axios({
-      //   method: "post",
-      //   url: openAiUrl,
-      //   headers: {
-      //     Authorization: "Bearer " + apiKey,
-      //     "Content-Type": "application/json",
-      //   },
-      //   data: JSON.stringify({
-      //     model,
-      //     messages: prompt
-      //   }),
-      //   timeout: 0,
-      // });
+      const data = await axios({
+        method: "post",
+        url: openAiUrl,
+        headers: {
+          Authorization: "Bearer " + apiKey,
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          model,
+          messages: prompt
+        }),
+        timeout: 0,
+      });
+      console.log(data,'ddd');
+      messages.push(data.choices[0].message)
+      messages.length > maxMsgLength && messages.shift()
+      msgContext[id] = messages
 
-      // messages.push(data.choices[0].message)
-      // messages.length > maxMsgLength && messages.shift()
-      // msgContext[id] = messages
-
-      // text = data.choices[0].message.content;
+      text = data.choices[0].message.content;
 
       /* 全量 --- end */
 
       /* 数据流 */
-      const stream = await OpenAIStream(openAiUrl, prompt, apiKey, model);
+      // const stream = await OpenAIStream(openAiUrl, prompt, apiKey, model);
 
-      const reader = stream.getReader();
-      let content = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        content += value;
-      }
-      messages.push({ role: "assistant", content });
+      // const reader = stream.getReader();
+      // let content = "";
+      // while (true) {
+      //   const { done, value } = await reader.read();
+      //   if (done) break;
+      //   content += value;
+      // }
+      // messages.push({ role: "assistant", content });
 
-      messages.length > maxMsgLength && messages.shift();
-      msgContext[id] = messages;
+      // messages.length > maxMsgLength && messages.shift();
+      // msgContext[id] = messages;
 
-      text = content;
+      // text = content;
       /* 数据流 --- end */
     },
   };
