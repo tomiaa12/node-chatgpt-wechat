@@ -50,7 +50,7 @@ const replyRoomTopic = [
   "回宁远种田",
   "马飞测试",
   "又是被摩擦的一天",
-  "新疆吃吃睡",
+  "新疆吃吃睡睡",
 ];
 // const replyRoomTopic = true
 
@@ -335,11 +335,11 @@ wechaty
   })
   .on("message", async (message) => {
     const sendQr = async () => {
-      const imageFileBox = FileBox.fromUrl("https://kuangyx.cn/img/wxq1.png");
-      await message.say(imageFileBox);
+      // const imageFileBox = FileBox.fromUrl("https://kuangyx.cn/img/wxq1.png");
+      // await message.say(imageFileBox);
       if (message.room()) {
-        const contact = message.talker();
-        await message.say(`@${contact.name()} 进群回复`);
+        // const contact = message.talker();
+        await message.say(`@${contact.name()} 无权限`);
       } else if (message.text()) {
         await message.say(`群内回复`);
       }
