@@ -1,9 +1,22 @@
 import { createParser } from "eventsource-parser";
 
-export const OpenAIStream = async (openAiUrl, msg, apiKey, model) => {
+export const OpenAIStream = async (openAiUrl, messages, apiKey, model) => {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
+  // const res = await fetch(openAiUrl, {
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${apiKey}`,
+  //   },
+  //   method: "POST",
+  //   body: JSON.stringify({
+  //     model,
+  //     token: 0,
+  //     user_id: 0,
+  //     messages,
+  //   }),
+  // });
   const res = await fetch(openAiUrl, {
     headers: {
       "Content-Type": "application/json",
@@ -11,10 +24,9 @@ export const OpenAIStream = async (openAiUrl, msg, apiKey, model) => {
     },
     method: "POST",
     body: JSON.stringify({
+      stream: true,
       model,
-      token: 0,
-      user_id: 0,
-      msg,
+      messages,
     }),
   });
   if (res.status !== 200) {
