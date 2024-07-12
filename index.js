@@ -29,7 +29,7 @@ import axios from "axios"
 // openAI key
 const apiKey = "";
 // gpt 模型, gpt3: gpt-3.5-turbo, gpt4: gpt-4-0613
-const model = "gpt-3.5-turbo";
+const model = "gpt-4";
 
 // 保留对话上下文的消息数量，群消息问题是共享的，A提问，与B提问是在一个上下文中
 const maxMsgLength = 3;
@@ -50,6 +50,7 @@ const replyRoomTopic = [
   "回宁远种田",
   "马飞测试",
   "又是被摩擦的一天",
+  "新疆吃吃睡",
 ];
 // const replyRoomTopic = true
 
@@ -233,6 +234,7 @@ const getMsg = async (msg, id, message) => {
       const data = await axios({
         method: "post",
         url: openAiUrl,
+        maxBodyLength: Infinity,
         headers: {
           Authorization: "Bearer " + apiKey,
           "Content-Type": "application/json",
@@ -243,7 +245,6 @@ const getMsg = async (msg, id, message) => {
         }),
         timeout: 0,
       });
-      console.log(data,'ddd');
       messages.push(data.choices[0].message)
       messages.length > maxMsgLength && messages.shift()
       msgContext[id] = messages
