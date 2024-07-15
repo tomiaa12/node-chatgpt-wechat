@@ -53,6 +53,7 @@ const replyRoomTopic = [
   "又是被摩擦的一天",
   "新疆吃吃睡睡",
   "GPT",
+  "前小铁前端搬运工"
 ];
 // const replyRoomTopic = true
 
@@ -142,7 +143,7 @@ const getMsg = async (msg, id, message) => {
         responseType: "arraybuffer",
       });
 
-      const buffer = await sharp(data).toFormat("png").toBuffer();
+      const buffer = await sharp(data).toBuffer();
 
       const imageFileBox = FileBox.fromBuffer(buffer, "1.png");
       await message.say(imageFileBox);
@@ -349,7 +350,7 @@ wechaty
       // const imageFileBox = FileBox.fromUrl("https://kuangyx.cn/img/wxq1.png");
       // await message.say(imageFileBox);
       if (message.room()) {
-        // const contact = message.talker();
+        const contact = message.talker();
         await message.say(`@${contact.name()} 无权限`);
       } else if (message.text()) {
         await message.say(`群内回复`);
