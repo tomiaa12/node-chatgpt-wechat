@@ -12,10 +12,12 @@ export const openAiUrl = "https://openai.kunshanyuxin.com/v1/chat/completions";
 //   if (new Set(data.all_data).size > 1) return data.all_data.join("\n");
 //   else return sendErr ? '出错啦' : "";
 // };
-export const morningPaper = async (sendErr) => {
-  const { data } = await axios.get("https://api.52vmy.cn/api/wl/60s?type=json");
-  if (data.length)
-    return data.map((item, i) => `${i + 1}、${item}`).join("\n");
+export const morningPaper = async ({ sendErr, getImg }) => {
+  const { news, image } = await axios.get(
+    "http://api.suxun.site/api/sixs?type=json"
+  );
+  if (getImg) return image;
+  if (news.length) return news.join("\n");
   else return sendErr ? "出错啦" : "";
 };
 

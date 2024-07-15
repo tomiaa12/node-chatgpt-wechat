@@ -23,7 +23,8 @@ import {
 } from "./src/api/index.js";
 import dayjs from "dayjs";
 import qrcodeTerminal from "qrcode-terminal";
-import axios from "axios"
+import axios from "axios";
+import sharp from "sharp";
 /* ----------------  配置  ---------------- */
 
 // openAI key
@@ -51,6 +52,7 @@ const replyRoomTopic = [
   "马飞测试",
   "又是被摩擦的一天",
   "新疆吃吃睡睡",
+  "GPT",
 ];
 // const replyRoomTopic = true
 
@@ -133,8 +135,17 @@ const getMsg = async (msg, id, message) => {
       text = data;
     },
     async 早报() {
-      const data = await morningPaper(true);
-      text = data;
+      const url = await morningPaper({ sendErr: true, getImg: true });
+      text = '';
+      const data = await axios({
+        url,
+        responseType: "arraybuffer",
+      });
+
+      const buffer = await sharp(data).toFormat("png").toBuffer();
+
+      const imageFileBox = FileBox.fromBuffer(buffer, "1.png");
+      await message.say(imageFileBox);
     },
     async 彩虹屁() {
       const data = await rainbow();
@@ -241,13 +252,13 @@ const getMsg = async (msg, id, message) => {
         },
         data: JSON.stringify({
           model,
-          messages: prompt
+          messages: prompt,
         }),
         timeout: 0,
       });
-      messages.push(data.choices[0].message)
-      messages.length > maxMsgLength && messages.shift()
-      msgContext[id] = messages
+      messages.push(data.choices[0].message);
+      messages.length > maxMsgLength && messages.shift();
+      msgContext[id] = messages;
 
       text = data.choices[0].message.content;
 
