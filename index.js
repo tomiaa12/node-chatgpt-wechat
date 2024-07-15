@@ -242,6 +242,7 @@ const getMsg = async (msg, id, message) => {
         ...messages,
       ];
 
+      if(!apiKey) return console.error("没有 API key")
       /* 全量 */
       const data = await axios({
         method: "post",
