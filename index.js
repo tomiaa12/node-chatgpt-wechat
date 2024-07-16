@@ -136,17 +136,18 @@ const getMsg = async (msg, id, message) => {
       text = data;
     },
     async 早报() {
-      const url = await morningPaper({ sendErr: true, getImg: true });
-      text = '';
-      const data = await axios({
-        url,
-        responseType: "arraybuffer",
-      });
+      text = await morningPaper({ sendErr: true });
+      // const url = await morningPaper({ sendErr: true, getImg: true });
+      // text = '';
+      // const data = await axios({
+      //   url,
+      //   responseType: "arraybuffer",
+      // });
 
-      const buffer = await sharp(data).toBuffer();
+      // const buffer = await sharp(data).toBuffer();
 
-      const imageFileBox = FileBox.fromBuffer(buffer, "1.png");
-      await message.say(imageFileBox);
+      // const imageFileBox = FileBox.fromBuffer(buffer, "1.png");
+      // await message.say(imageFileBox);
     },
     async 彩虹屁() {
       const data = await rainbow();
