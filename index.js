@@ -42,6 +42,10 @@ const sendMorningPaperTime = "0 9 * * *";
 // 要发送早报的群聊
 const sendMorningPaperToptics = ["回宁远种田", "开发交流群"];
 
+// 每日日报提醒
+const sendDailyPaperTime = "0 18 * * *";
+const sendDailyPaperToptics = ["新疆吃吃睡睡"];
+
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = "出错了，再问我一次吧";
 
@@ -344,6 +348,16 @@ wechaty
           const text = await morningPaper();
           text && (await rooms.forEach((room) => room.say(text)));
         }
+      }
+    });
+    schedule.scheduleJob(sendDailyPaperTime, async () => {
+      console.log("定时任务触发");
+      const rooms = await wechaty.Room.findAll({
+        topic: new RegExp(`^${sendDailyPaperToptics.join("|")}$`),
+      });
+
+      if (rooms.length) {
+        await rooms.forEach((room) => room.say(`@所有人 日报日报 ==> http://v2.kuangyx.cn`))
       }
     });
   })
