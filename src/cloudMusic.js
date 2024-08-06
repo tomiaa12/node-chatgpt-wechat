@@ -6,9 +6,7 @@ import axios from "axios";
 import { randomInteger } from "./guessit.js";
 import path from "path";
 import { fileURLToPath } from "url";
-
-const email = "";
-const password = "";
+import { email, password } from '../config.js'
 const playlistId = "8757528656"; // 歌单ID
 const realIP = "116.25.146.159";
 
