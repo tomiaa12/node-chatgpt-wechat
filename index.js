@@ -29,7 +29,7 @@ import { apiKey } from './config.js'
 /* ----------------  配置  ---------------- */
 
 // gpt 模型, gpt3: gpt-3.5-turbo, gpt4: gpt-4-0613
-const model = "gpt-3.5-turbo";
+const model = "gpt4";
 
 // 保留对话上下文的消息数量，群消息问题是共享的，A提问，与B提问是在一个上下文中
 const maxMsgLength = 3;
