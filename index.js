@@ -42,8 +42,23 @@ const sendMorningPaperTime = "0 9 * * *";
 const sendMorningPaperToptics = ["回宁远种田", "开发交流群"];
 
 // 每日提醒
-const sendDailyPaperTime = "0 18 * * *";
-const sendDailyPaperToptics = ["新疆吃吃睡睡"];
+const reminds = [
+  {
+    time: "0 18 * * 1-5",
+    toptics: ['新疆吃吃睡睡'],
+    say: `日报日报 ==> http://v2.kuangyx.cn`
+  },
+  {
+    time: "29 13 * * 1-5",
+    toptics: ['新疆吃吃睡睡'],
+    say: `今天吃什么 ==> https://chishenme.xyz/`
+  },
+  {
+    time: "0 20 * * 1-5",
+    toptics: ['新疆吃吃睡睡'],
+    say: `到点打卡`
+  },
+]
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = "出错了，再问我一次吧";
@@ -349,16 +364,19 @@ wechaty
         }
       }
     });
-    schedule.scheduleJob(sendDailyPaperTime, async () => {
-      console.log("定时任务触发");
-      const rooms = await wechaty.Room.findAll({
-        topic: new RegExp(`^${sendDailyPaperToptics.join("|")}$`),
-      });
 
-      if (rooms.length) {
-        await rooms.forEach((room) => room.say(`@所有人 日报日报 ==> http://v2.kuangyx.cn`))
-      }
-    });
+    for(const i of reminds) {
+      schedule.scheduleJob(i.time, async () => {
+        console.log("定时任务触发", i.time, i.say);
+        const rooms = await wechaty.Room.findAll({
+          topic: new RegExp(`^${i.toptics.join("|")}$`),
+        });
+  
+        if (rooms.length) {
+          await rooms.forEach((room) => room.say(i.say))
+        }
+      });
+    }
   })
   .on("message", async (message) => {
     const sendQr = async () => {
@@ -405,28 +423,29 @@ wechaty
         console.log("报错: ", e.message);
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
-    } else if (message.text() && message.type() === wechaty.Message.Type.Text) {
+    } 
+   /*  else if (message.text() && message.type() === wechaty.Message.Type.Text) {
       const contact = message.from();
       console.log(`[${contact.name()}]: ${message.text()}`);
       await sendQr();
+    } */
+
+    else if (message.text()) {
+      const id = message.talker().id;
+      privateChatStatic[id] ??= 0;
+      if (privateChatStatic[id] > privateChatNum) {
+        message.say("每日私聊次数超限");
+        return;
+      }
+
+      // 文字消息
+      const msg = message.text();
+
+      if (runing[id]) return;
+
+      const text = await getMsg(msg, id, message);
+      text && (await message.say(text));
     }
-
-    //  else if (message.text()) {
-    //   const id = message.talker().id;
-    //   privateChatStatic[id] ??= 0;
-    //   if (privateChatStatic[id] > privateChatNum) {
-    //     message.say("私聊次数超限，仅支持群内提问或等待第二天9点刷新");
-    //     return;
-    //   }
-
-    //   // 文字消息
-    //   const msg = message.text();
-
-    //   if (runing[id]) return;
-
-    //   const text = await getMsg(msg, id, message);
-    //   text && (await message.say(text));
-    // }
   })
   .on("error", (error) => {
     console.error("error", error);
