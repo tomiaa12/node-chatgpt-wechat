@@ -25,7 +25,8 @@ import dayjs from "dayjs";
 import qrcodeTerminal from "qrcode-terminal";
 import axios from "axios";
 import sharp from "sharp";
-import { apiKey } from './config.js'
+import { apiKey } from "./config.js";
+import { getNote } from "./note.js";
 /* ----------------  配置  ---------------- */
 
 // gpt 模型, gpt3: gpt-3.5-turbo, gpt4: gpt-4-0613
@@ -45,20 +46,20 @@ const sendMorningPaperToptics = ["回宁远种田", "开发交流群"];
 const reminds = [
   {
     time: "0 18 * * 1-5",
-    toptics: ['新疆吃吃睡睡'],
-    say: `日报日报 ==> http://v2.kuangyx.cn`
+    toptics: ["新疆吃吃睡睡"],
+    say: `日报日报 ==> http://v2.kuangyx.cn`,
   },
   {
     time: "29 13 * * 1-5",
-    toptics: ['新疆吃吃睡睡'],
-    say: `今天吃什么 ==> https://chishenme.xyz/`
+    toptics: ["新疆吃吃睡睡"],
+    say: `今天吃什么 ==> https://chishenme.xyz/`,
   },
   {
     time: "0 20 * * 1-5",
-    toptics: ['新疆吃吃睡睡'],
-    say: `到点打卡`
+    toptics: ["新疆吃吃睡睡"],
+    say: `到点打卡`,
   },
-]
+];
 
 // 查询 gpt 失败时回复的消息
 const queryErrMsg = "出错了，再问我一次吧";
@@ -71,7 +72,7 @@ const replyRoomTopic = [
   "又是被摩擦的一天",
   "新疆吃吃睡睡",
   "GPT",
-  "前小铁前端搬运工"
+  "前小铁前端搬运工",
 ];
 // const replyRoomTopic = true
 
@@ -245,6 +246,9 @@ const getMsg = async (msg, id, message) => {
     async 功能() {
       text = Functions.join("\n");
     },
+    async 经典语录() {
+      text = getNote();
+    },
     async default() {
       let messages = msgContext[id] || [];
       if (maxMsgLength) {
@@ -261,7 +265,7 @@ const getMsg = async (msg, id, message) => {
         ...messages,
       ];
 
-      if(!apiKey) return console.error("没有 API key")
+      if (!apiKey) return console.error("没有 API key");
       /* 全量 */
       const data = await axios({
         method: "post",
@@ -365,15 +369,15 @@ wechaty
       }
     });
 
-    for(const i of reminds) {
+    for (const i of reminds) {
       schedule.scheduleJob(i.time, async () => {
         console.log("定时任务触发", i.time, i.say);
         const rooms = await wechaty.Room.findAll({
           topic: new RegExp(`^${i.toptics.join("|")}$`),
         });
-  
+
         if (rooms.length) {
-          await rooms.forEach((room) => room.say(i.say))
+          await rooms.forEach((room) => room.say(i.say));
         }
       });
     }
@@ -423,14 +427,12 @@ wechaty
         console.log("报错: ", e.message);
         room.say(`@${contact.name()} ${queryErrMsg}`);
       }
-    } 
-   /*  else if (message.text() && message.type() === wechaty.Message.Type.Text) {
+    } else if (message.text()) {
+    /*  else if (message.text() && message.type() === wechaty.Message.Type.Text) {
       const contact = message.from();
       console.log(`[${contact.name()}]: ${message.text()}`);
       await sendQr();
     } */
-
-    else if (message.text()) {
       const id = message.talker().id;
       privateChatStatic[id] ??= 0;
       if (privateChatStatic[id] > privateChatNum) {
