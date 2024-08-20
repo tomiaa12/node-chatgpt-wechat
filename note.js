@@ -86,6 +86,7 @@ export const note = [
   "你们搞不好，那就换人，招大数据算法可能有点难，招java后端前端一抓一大把",
   "下周提个建议，罚测试的款",
   "我带过所有的团队，没有像你们这么差的",
+  "这个东西我也不懂，我也不是搞开发的",
 ];
 
 export const getNote = () => note[randomInteger(0, note.length - 1)];
