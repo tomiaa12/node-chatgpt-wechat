@@ -46,17 +46,17 @@ const sendMorningPaperToptics = ["回宁远种田", "开发交流群"];
 const reminds = [
   {
     time: "0 18 * * 1-5",
-    toptics: ["新疆吃吃睡睡"],
+    toptics: ["新疆吃吃睡睡", "哐当"],
     say: `日报日报 ==> http://v2.kuangyx.cn`,
   },
   {
     time: "29 13 * * 1-5",
-    toptics: ["新疆吃吃睡睡"],
+    toptics: ["新疆吃吃睡睡", "哐当"],
     say: `今天吃什么 ==> https://chishenme.xyz/`,
   },
   {
     time: "0 20 * * 1-5",
-    toptics: ["新疆吃吃睡睡"],
+    toptics: ["新疆吃吃睡睡", "哐当"],
     say: `到点打卡`,
   },
 ];
@@ -73,6 +73,7 @@ const replyRoomTopic = [
   "新疆吃吃睡睡",
   "GPT",
   "前小铁前端搬运工",
+  "哐当",
 ];
 // const replyRoomTopic = true
 
