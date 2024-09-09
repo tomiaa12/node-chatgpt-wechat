@@ -2,7 +2,7 @@
 const randomInteger = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
-export const note = [
+let note = [
   "我只讲15分钟，不耽误大家太多时间",
   "我们把上班的8个小时充分利用好",
   "我们不强求加班",
@@ -96,6 +96,23 @@ export const note = [
   "平时我睁一只眼闭一只眼但是现在这个特殊情况我不想睁一只眼闭一只眼",
   "我知道你早上也来了但是来的不够嘛，下午这个会是必须要开的，我也不让你多加一分班",
   "你想来就来不想来就拉倒",
+  "我相信，在国内，不出三年AI就能代替开发，开发会变成实施，实施会被淘汰",
+  "用户要求的是这周要有输出",
+  "从长沙来的，我说实话，几乎没有加过班,十周里面可能有已周加班，但是你们一回长次就回一周，我相信长沙任何人一个，都想抢着来新疆",
 ];
 
-export const getNote = () => note[randomInteger(0, note.length - 1)];
+let usedNotes = [];
+export const getNote = () => {
+  if (note.length === 0) {
+    note = [...usedNotes];
+    usedNotes = [];
+  }
+
+  const randomIndex = randomInteger(0, note.length - 1);
+  const selectedNote = note[randomIndex];
+
+  note.splice(randomIndex, 1);
+  usedNotes.push(selectedNote);
+
+  return selectedNote;
+};
