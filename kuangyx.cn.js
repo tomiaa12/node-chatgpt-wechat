@@ -9,6 +9,7 @@ import twoDimension from "./src/twoDimension.js";
 import movie from "./src/movie.js";
 import lol from "../lol-voice-skin/data.json" assert { type: "json" };
 import { musicList, getFileBox, init } from "./src/cloudMusic.js";
+import { apiKey } from "./config.js";
 
 import { resolve } from "path";
 import dayjs from "dayjs";
@@ -39,8 +40,8 @@ app.use(async (req, res, next) => {
   }
 });
 
-morgan.token("body", (req) => Object.keys(req.body).length ? `body ${JSON.stringify(req.body)} \n` : '');
-morgan.token("query", (req) => Object.keys(req.query).length ?  `query ${JSON.stringify(req.query)} \n` : '');
+morgan.token("body", (req) => Object.keys(req.body).length ? `body ${JSON.stringify(req.body || {})} \n` : '');
+morgan.token("query", (req) => Object.keys(req.query).length ?  `query ${JSON.stringify(req.query || {})} \n` : '');
 morgan.token("now", () => dayjs().format("YYYY-MM-DD HH:mm:ss"));
 morgan.token("referrer", (req) => {
   const referer = req.get("Referer") || "";
@@ -72,6 +73,7 @@ route.post("/gpt", async (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", "Bearer " + apiKey);
 
   const requestOptions = {
     method: "POST",
